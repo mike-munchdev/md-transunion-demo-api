@@ -59,11 +59,9 @@ const resolvers = require('./server/resolvers/index');
     console.log(
       `🚀 GraphQL Subscriptions ready at ws://${ipaddr}:${PORT}${server.subscriptionsPath}`
     );
-    // migrate and seed database and add initial user
+    // seed database
     (async () => {
-      // await migrateDatabase();
       // await seedDatabase();
-      // await createInitialUser({ db });
     })();
   });
 })();

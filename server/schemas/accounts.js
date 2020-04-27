@@ -8,8 +8,8 @@ const typeDefs = gql`
     balance: Float!
     limit: Float!
     availableCredit: Float!
-    rating: String!
-    acctNumber: String!
+    accountRating: String!
+    accountNumber: String!
     paymentDate: Date
     status: String!
   }
@@ -21,7 +21,8 @@ const typeDefs = gql`
   }
 
   type Query {
-    getAccountsForUser(id: Int!): AccountsResponse
+    getAccountsForUser(userId: String!): AccountsResponse
+    getAccountsFromCode(code: String!): AccountsResponse
   }
 `;
 
