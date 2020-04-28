@@ -84,7 +84,7 @@ module.exports = {
     getAccountsForUser: async (parent, { userId }, context) => {
       try {
         const accounts = await getAccounts({ clientId: userId });
-        console.log('accounts', accounts);
+
         return createAccountsResponse({
           ok: true,
           accounts,
