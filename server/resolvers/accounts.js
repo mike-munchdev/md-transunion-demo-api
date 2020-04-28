@@ -8,7 +8,7 @@ const connectDatabase = require('../models/connectDatabase');
 
 const accountRatings = [{ id: 1, text: 'On Time' }];
 
-const createAccountsResponse = ({ ok, accounts = null, errors = null }) => ({
+const createAccountsResponse = ({ ok, accounts = [], errors = [] }) => ({
   ok,
   accounts: accounts.map((a) => ({
     creditorName: a.creditorName,
@@ -84,16 +84,14 @@ module.exports = {
     getAccountsForUser: async (parent, { userId }, context) => {
       try {
         const accounts = await getAccounts({ clientId: userId });
-
+        console.log('accounts', accounts);
         return createAccountsResponse({
           ok: true,
           accounts,
-          errors: null,
         });
       } catch (error) {
         return createAccountsResponse({
           ok: false,
-          accounts: null,
           errors: convertError(error),
         });
       }
@@ -105,12 +103,10 @@ module.exports = {
         return createAccountsResponse({
           ok: true,
           accounts,
-          errors: null,
         });
       } catch (error) {
         return createAccountsResponse({
           ok: false,
-          accounts: null,
           errors: convertError(error),
         });
       }
