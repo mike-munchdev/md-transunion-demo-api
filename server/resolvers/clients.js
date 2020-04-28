@@ -23,12 +23,11 @@ module.exports = {
         return createClientResponse({
           ok: true,
           client,
-          errors: null,
         });
       } catch (error) {
         return createClientResponse({
           ok: false,
-          client: null,
+
           errors: convertError(error),
         });
       }
@@ -55,12 +54,11 @@ module.exports = {
         return createClientResponse({
           ok: true,
           client,
-          errors: null,
         });
       } catch (error) {
         return createClientResponse({
           ok: false,
-          client: null,
+
           errors: convertError(error),
         });
       }

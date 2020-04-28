@@ -17,8 +17,8 @@ module.exports.decrypt = (text) => {
   return dec;
 };
 
-const hw = this.encrypt('hello world');
-console.log(this.decrypt(hw));
+// const hw = this.encrypt('hello world');
+// console.log(this.decrypt(hw));
 
 // const algorithm = 'aes-256-cbc';
 
