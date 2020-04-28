@@ -1,3 +1,5 @@
+const { encrypt } = require('../utils/encryption');
+
 const mongoose = require('mongoose');
 const { default: validatorF } = require('validator');
 
@@ -14,6 +16,7 @@ const ClientSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   middleName: { type: String, required: false },
   lastName: { type: String, required: true },
+  ssn: { type: String, required: true },
   suffix: { type: String, required: false },
   addresses: [
     {
@@ -38,6 +41,13 @@ const ClientSchema = new mongoose.Schema({
   ],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+});
+
+ClientSchema.pre('save', async function () {
+  const client = this;
+  if (client.isModified('ssn')) {
+    console.log('client', client);
+  }
 });
 
 module.exports = mongoose.model('Client', ClientSchema);
