@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const convertError = require('../utils/convertErrors');
-const Client = require('../models/Client');
+const Customer = require('../models/Customer');
 const Account = require('../models/Account');
 
 const tuData = require('../../tu-data1.json');
@@ -25,11 +25,11 @@ const createAccountsResponse = ({ ok, accounts = [], errors = [] }) => ({
   errors,
 });
 
-const transformAccountJSON = ({ accounts, client }) => {
+const transformAccountJSON = ({ accounts, customer }) => {
   return accounts
     .filter((a) => a.account.type === 'CC' || a.account.type === 'CH')
     .map((a) => ({
-      clientId: client._id,
+      customerId: customer._id,
       creditorName: a.subscriber.name.unparsed,
       balance: a.currentBalance,
       limit: a.creditLimit,
@@ -44,30 +44,30 @@ const transformAccountJSON = ({ accounts, client }) => {
     }));
 };
 
-const getAccounts = ({ code = null, clientId = null }) => {
+const getAccounts = ({ code = null, customerId = null }) => {
   return new Promise(async (resolve, reject) => {
     try {
       await connectDatabase();
 
       // TODO: check for accounts in db for this user/code
-      let client;
+      let customer;
       if (code) {
-        client = await Client.findOne({ code });
-      } else if (clientId) {
-        client = await Client.findOne({ clientId });
+        customer = await Customer.findOne({ code });
+      } else if (customerId) {
+        customer = await Customer.findOne({ customerId });
       }
 
-      if (!client)
-        throw new Error(`${clientId !== null ? 'User' : 'Code'} not found`);
+      if (!customer)
+        throw new Error(`${customerId !== null ? 'User' : 'Code'} not found`);
 
       let accounts;
-      accounts = await Account.find({ clientId: client._id });
+      accounts = await Account.find({ customerId: customer._id });
 
       // if accounts not found then get information from TransUnion
       if (!accounts || accounts.length === 0) {
         const transUnionData = transformAccountJSON({
           accounts: tuData.tradeAccounts,
-          client,
+          customer,
         });
         accounts = await Account.create(transUnionData);
       }
@@ -83,7 +83,7 @@ module.exports = {
   Query: {
     getAccountsForUser: async (parent, { userId }, context) => {
       try {
-        const accounts = await getAccounts({ clientId: userId });
+        const accounts = await getAccounts({ customerId: userId });
 
         return createAccountsResponse({
           ok: true,

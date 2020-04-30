@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const AccountSchema = new mongoose.Schema({
-  clientId: mongoose.Schema.Types.ObjectId,
+  customerId: mongoose.Schema.Types.ObjectId,
   creditorName: { type: String, required: true },
   balance: { type: Number, required: true },
   limit: { type: Number, required: true },

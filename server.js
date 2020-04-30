@@ -6,7 +6,7 @@ const http = require('http');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { ApolloServer } = require('apollo-server-express');
-const { verify } = require('jsonwebtoken');
+const context = require('./server/utils/context');
 const helment = require('helmet');
 
 // Provide schemas for apollo server
@@ -39,6 +39,7 @@ const resolvers = require('./server/resolvers/index');
   const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context,
   });
 
   server.applyMiddleware({

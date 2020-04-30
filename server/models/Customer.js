@@ -3,11 +3,10 @@ const { encrypt } = require('../utils/encryption');
 const mongoose = require('mongoose');
 const { default: validatorF } = require('validator');
 
-const ClientSchema = new mongoose.Schema({
+const CustomerSchema = new mongoose.Schema({
   code: { type: String, required: true },
   email: {
     type: String,
-    required: [true, 'Email is required'],
     validate: {
       validator: (v) => validatorF.isEmail(v),
       message: 'Email validation failed',
@@ -16,7 +15,8 @@ const ClientSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   middleName: { type: String, required: false },
   lastName: { type: String, required: true },
-  ssn: { type: String, required: true },
+  ssn: { type: String, required: false },
+  phoneNumber: { type: String, required: true },
   suffix: { type: String, required: false },
   addresses: [
     {
@@ -43,11 +43,11 @@ const ClientSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-ClientSchema.pre('save', async function () {
-  const client = this;
-  if (client.isModified('ssn')) {
-    console.log('client', client);
+CustomerSchema.pre('save', async function () {
+  const customer = this;
+  if (customer.isModified('ssn')) {
+    // console.log('customer: ssn changed', customer);
   }
 });
 
-module.exports = mongoose.model('Client', ClientSchema);
+module.exports = mongoose.model('Customer', CustomerSchema);
