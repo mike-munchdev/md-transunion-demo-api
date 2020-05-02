@@ -4,7 +4,7 @@ const { gql } = require('apollo-server-express');
 const typeDefs = gql`
   type TokenResponse {
     ok: Boolean!
-    token: String!
+    token: String
     errors: [Error!]
   }
 
@@ -13,6 +13,7 @@ const typeDefs = gql`
       code: String!
       phoneNumber: String!
     ): TokenResponse
+    getTokenByCustomerId(customerId: String!): TokenResponse
   }
 `;
 

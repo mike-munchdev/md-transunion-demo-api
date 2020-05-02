@@ -19,7 +19,7 @@ const findCustomer = (decoded) => {
     try {
       if (decoded.info.code) {
         await connectDatabase();
-        const customer = await Customer.findOne({ code: decoded.info.code });
+        const customer = await Customer.findById(decoded.info.id);
         resolve(customer);
       } else {
         throw new Error('Malformed token');
@@ -47,6 +47,7 @@ const generateToken = ({ user, type }) => {
 
       resolve(token);
     } catch (e) {
+      console.log('e', e);
       reject(e);
     }
   });

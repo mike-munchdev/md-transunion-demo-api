@@ -4,6 +4,7 @@ const { gql } = require('apollo-server-express');
 const typeDefs = gql`
   scalar Date
   type Account {
+    id: String!
     creditorName: String!
     balance: Float!
     limit: Float!
@@ -14,15 +15,35 @@ const typeDefs = gql`
     status: String!
   }
 
+  input TransUnionInput {
+    customerId: String!
+    ssn: String!
+    firstNane: String!
+    middleName: String
+    lastName: String!
+    suffix: String
+    addressNumber: String
+    street: String
+    addressType: String
+    unit: String
+    city: String
+    state: String
+    zip: String
+  }
+
   type AccountsResponse {
     ok: Boolean!
-    accounts: [Account]
+    validAccounts: [Account]
+    invalidAccounts: [Account]
     errors: [Error!]
   }
 
   type Query {
-    getAccountsForUser(userId: String!): AccountsResponse
+    getAccountsForCustomer(customerId: String!): AccountsResponse
     getAccountsFromCode(code: String!): AccountsResponse
+    getAccountInformationFromTransUnion(
+      input: TransUnionInput
+    ): AccountsResponse
   }
 `;
 

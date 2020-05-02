@@ -3,7 +3,7 @@ if (process.env.NODE_ENV !== 'production') require('dotenv').config();
 
 module.exports.encrypt = (text) => {
   const cipher = createCipher('aes-256-cbc', process.env.ENCRYPTION_KEY);
-  console.log('cipher', cipher);
+  // console.log('cipher', cipher);
   let crypted = cipher.update(text, 'utf8', 'hex');
   crypted += cipher.final('hex');
   return crypted;

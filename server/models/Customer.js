@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const { default: validatorF } = require('validator');
 
 const CustomerSchema = new mongoose.Schema({
-  code: { type: String, required: true },
   email: {
     type: String,
     validate: {
@@ -18,7 +17,12 @@ const CustomerSchema = new mongoose.Schema({
   ssn: { type: String, required: false },
   phoneNumber: { type: String, required: true },
   suffix: { type: String, required: false },
-  addresses: [
+  address: { type: String, required: false },
+  address2: { type: String, required: false },
+  city: { type: String, required: false },
+  state: { type: String, required: false },
+  zip: { type: String, required: false },
+  previousAddresses: [
     {
       status: { type: String, required: true },
       qualifier: { type: String, required: true },
@@ -46,7 +50,6 @@ const CustomerSchema = new mongoose.Schema({
 CustomerSchema.pre('save', async function () {
   const customer = this;
   if (customer.isModified('ssn')) {
-    // console.log('customer: ssn changed', customer);
   }
 });
 

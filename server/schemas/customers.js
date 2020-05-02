@@ -23,12 +23,25 @@ const typeDefs = gql`
     errors: [Error!]
   }
 
-  input MutateCustomerInput {
-    customerId: String
+  input CreateCustomerInput {
     firstName: String!
     lastName: String!
     email: String
     phoneNumber: String!
+    ssn: String
+    address: String
+    address2: String
+    city: String
+    state: String
+    zip: String
+  }
+
+  input UpdateCustomerInput {
+    customerId: String!
+    firstName: String
+    lastName: String
+    email: String
+    phoneNumber: String
     ssn: String
     address: String
     address2: String
@@ -42,8 +55,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    createCustomer(input: MutateCustomerInput): CustomerResponse
-    updateCustomer(input: MutateCustomerInput): CustomerResponse
+    createCustomer(input: CreateCustomerInput): CustomerResponse
+    updateCustomer(input: UpdateCustomerInput): CustomerResponse
   }
 `;
 

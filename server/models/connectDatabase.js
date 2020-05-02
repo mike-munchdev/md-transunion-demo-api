@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
+mongoose.set('useFindAndModify', false);
 let isConnected;
 
 const DB_URL = process.env.MONGODB_URI;
