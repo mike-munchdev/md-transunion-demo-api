@@ -19,6 +19,7 @@ module.exports = async (args) => {
           if (
             arr[1].includes('getTokenByCodeAndPhoneNumber(') ||
             arr[1].includes('createCustomer(') ||
+            arr[1].includes('createCustomerCodeForCustomer(') ||
             arr[1].includes('getAccountInformationFromTransUnion(') ||
             arr[1].includes('getCustomerCodeByCustomerId(') ||
             arr[0].includes('query IntrospectionQuery {')

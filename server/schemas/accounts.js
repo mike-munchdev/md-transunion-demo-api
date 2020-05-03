@@ -18,14 +18,12 @@ const typeDefs = gql`
   input TransUnionInput {
     customerId: String!
     ssn: String!
-    firstNane: String!
+    firstName: String!
     middleName: String
     lastName: String!
     suffix: String
-    addressNumber: String
-    street: String
-    addressType: String
-    unit: String
+    address: String
+    address2: String
     city: String
     state: String
     zip: String
@@ -42,7 +40,7 @@ const typeDefs = gql`
     getAccountsForCustomer(customerId: String!): AccountsResponse
     getAccountsFromCode(code: String!): AccountsResponse
     getAccountInformationFromTransUnion(
-      input: TransUnionInput
+      input: TransUnionInput!
     ): AccountsResponse
   }
 `;

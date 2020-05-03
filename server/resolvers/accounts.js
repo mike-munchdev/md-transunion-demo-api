@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
 const axios = require('axios').default;
 const convertError = require('../utils/convertErrors');
 const Customer = require('../models/Customer');
 const Account = require('../models/Account');
 
-const tuData = require('../../tu-data1.json');
+const { accountRatings } = require('../utils/lookup');
 const connectDatabase = require('../models/connectDatabase');
 
 const transformAccountJSON = (a) => {
@@ -56,16 +55,19 @@ const transformTransUnionJSON = ({ accounts, customer }) => {
     }));
 };
 
-const getCustomerTransUnionData = async (ssn) => {
+// TODO: change to work with transunion pull
+const getCustomerTransUnionData = async ({ data, filters }) => {
   return new Promise((resolve, reject) => {
     try {
-      const customerData = tuData.find(
-        (d) => d.indicative.socialSecurity.number.toString() === ssn
-      );
-      if (customerData)
+      const customerMatch =
+        data.indicative.name.person.first === filters.firstName.toUpperCase() &&
+        data.indicative.name.person.last === filters.lastName.toUpperCase() &&
+        data.indicative.socialSecurity.number.toString() === filters.ssn;
+
+      if (customerMatch)
         resolve({
-          tradeAccounts: customerData.tradeAccounts,
-          collectionAccounts: customerData.collectionAccounts,
+          tradeAccounts: data.tradeAccounts,
+          collectionAccounts: data.collectionAccounts,
         });
 
       throw new Error('No TransUnion data found!');
@@ -74,6 +76,7 @@ const getCustomerTransUnionData = async (ssn) => {
     }
   });
 };
+
 const getAccounts = ({ code = null, customerId = null }) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -95,27 +98,6 @@ const getAccounts = ({ code = null, customerId = null }) => {
       let accounts;
       accounts = await Account.find({ customerId: customer._id });
 
-      // if accounts not found then get information from TransUnion
-      if (!accounts || accounts.length === 0) {
-        const userAccountsFromTransUnion = await getCustomerTransUnionData(
-          customer.ssn
-        );
-
-        if (userAccountsFromTransUnion) {
-          const transUnionData = transformTransUnionJSON({
-            accounts: [
-              ...userAccountsFromTransUnion.tradeAccounts,
-              ...userAccountsFromTransUnion.collectionAccounts,
-            ],
-            customer,
-          });
-
-          await Account.create(transUnionData);
-
-          accounts = await Account.find({ customerId: customer._id });
-        }
-      }
-
       resolve(accounts);
     } catch (error) {
       reject(error);
@@ -125,7 +107,7 @@ const getAccounts = ({ code = null, customerId = null }) => {
 
 module.exports = {
   Query: {
-    getAccountsForCustomer: async (parent, { customerId }, context) => {
+    getAccountsForCustomer: async (parent, { customerId }) => {
       try {
         const accounts = await getAccounts({ customerId });
 
@@ -141,7 +123,7 @@ module.exports = {
         });
       }
     },
-    getAccountsFromCode: async (parent, { code }, context) => {
+    getAccountsFromCode: async (parent, { code }) => {
       try {
         const accounts = await getAccounts({ code });
 
@@ -157,30 +139,34 @@ module.exports = {
         });
       }
     },
-    getAccountInformationFromTransUnion: async (parent, { input }, context) => {
+    getAccountInformationFromTransUnion: async (parent, { input }) => {
       try {
         await connectDatabase();
 
         // connecting to test transunion data
-        // const customer = await Customer.findById(input.customerId);
+        const customer = await Customer.findById(input.customerId);
 
-        // const result = await axios.get(process.env.TU_API_PATH, {
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     Accept: 'application/json',
-        //   },
-        // });
+        const result = await axios.get(process.env.TU_API_PATH, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
 
-        // // console.log('result', result.data);
-        // const transUnionData = transformTransUnionJSON({
-        //   accounts: [
-        //     ...result.data.tradeAccounts,
-        //     ...result.data.collectionAccounts,
-        //   ],
-        //   customer,
-        // });
+        const filteredResults = await getCustomerTransUnionData({
+          data: result.data,
+          filters: input,
+        });
 
-        // await Account.create(transUnionData);
+        const transUnionData = transformTransUnionJSON({
+          accounts: [
+            ...filteredResults.tradeAccounts,
+            ...filteredResults.collectionAccounts,
+          ],
+          customer,
+        });
+
+        await Account.create(transUnionData);
 
         const accounts = await Account.find({ customerId: input.customerId });
 

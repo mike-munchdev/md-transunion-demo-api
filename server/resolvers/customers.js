@@ -3,6 +3,7 @@ const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
 
 const Customer = require('../models/Customer');
+const Account = require('../models/Account');
 const CustomerCode = require('../models/CustomerCode');
 
 const connectDatabase = require('../models/connectDatabase');
@@ -21,10 +22,12 @@ module.exports = {
 
         // TODO: check for accounts in db for this user/code
         const customer = await Customer.findById(customerId);
+        const accountCount = await Account.count({ customerId: customerId });
 
         if (!customer)
           throw new Error('No customer found with the provided information.');
 
+        customer.accountCount = accountCount;
         return createCustomerResponse({
           ok: true,
           customer,
@@ -80,7 +83,7 @@ module.exports = {
             upsert: false,
           }
         );
-        
+
         return createCustomerResponse({
           ok: true,
           customer,

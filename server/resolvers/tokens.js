@@ -37,11 +37,14 @@ const getCustomer = ({
         customer.code = customerCode.code;
         resolve(customer);
       } else if (customerId) {
+        const customer = await Customer.findById(customerId);
+        resolve(customer);
       }
-      // Get Code
-
       if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
-    } catch (error) {}
+    } catch (error) {
+      console.log('error', error);
+      reject(error);
+    }
   });
 };
 module.exports = {

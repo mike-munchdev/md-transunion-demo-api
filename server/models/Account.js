@@ -14,5 +14,9 @@ const AccountSchema = new mongoose.Schema({
 });
 
 // TODO: encrypt credit card number in database;
-
+AccountSchema.pre('save', async function () {
+  const account = this;
+  if (account.isModified('accountNumber')) {
+  }
+});
 module.exports = mongoose.model('Account', AccountSchema);

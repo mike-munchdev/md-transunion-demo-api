@@ -50,9 +50,7 @@ module.exports = {
       try {
         await connectDatabase();
 
-        const customer = await Customer.create({
-          customerId: input.customerId,
-        });
+        const customer = await Customer.findById(input.customerId);
 
         if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
 

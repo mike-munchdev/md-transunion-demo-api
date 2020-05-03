@@ -10,12 +10,13 @@ const CustomerSchema = new mongoose.Schema({
       validator: (v) => validatorF.isEmail(v),
       message: 'Email validation failed',
     },
+    unique: true,
   },
   firstName: { type: String, required: true },
   middleName: { type: String, required: false },
   lastName: { type: String, required: true },
-  ssn: { type: String, required: false },
-  phoneNumber: { type: String, required: true },
+  ssn: { type: String, required: false, unique: true },
+  phoneNumber: { type: String, required: true, unique: true },
   suffix: { type: String, required: false },
   address: { type: String, required: false },
   address2: { type: String, required: false },
@@ -47,6 +48,7 @@ const CustomerSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// TODO: encrypt ssn in database;
 CustomerSchema.pre('save', async function () {
   const customer = this;
   if (customer.isModified('ssn')) {

@@ -7,7 +7,9 @@ const typeDefs = gql`
     code: String
     email: String
     firstName: String!
+    middleName: String
     lastName: String!
+    suffix: String
     phoneNumber: String!
     ssn: String
     address: String
@@ -15,6 +17,7 @@ const typeDefs = gql`
     city: String
     state: String
     zip: String
+    accountCount: Int
   }
 
   type CustomerResponse {
@@ -24,9 +27,11 @@ const typeDefs = gql`
   }
 
   input CreateCustomerInput {
-    firstName: String!
-    lastName: String!
     email: String
+    firstName: String!
+    middleName: String
+    lastName: String!
+    suffix: String
     phoneNumber: String!
     ssn: String
     address: String
@@ -38,9 +43,11 @@ const typeDefs = gql`
 
   input UpdateCustomerInput {
     customerId: String!
-    firstName: String
-    lastName: String
     email: String
+    firstName: String
+    middleName: String
+    lastName: String
+    suffix: String
     phoneNumber: String
     ssn: String
     address: String
