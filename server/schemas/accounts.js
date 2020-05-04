@@ -5,34 +5,34 @@ const typeDefs = gql`
   scalar Date
   type Account {
     id: String!
-    creditorName: String!
-    balance: Float!
-    limit: Float!
-    availableCredit: Float!
-    accountRating: String!
-    accountNumber: String!
-    paymentDate: Date
-    status: String!
+    customerId: String!
+    tradeAccounts: [TuAccount]
+    collectionAccounts: [TuAccount]
+    creditSummary: TuCreditSummary
+    indicative: TuIndicative
+    addOnProduct: TuAddOnProduct
   }
 
   input TransUnionInput {
     customerId: String!
-    ssn: String!
-    firstName: String!
-    middleName: String
-    lastName: String!
-    suffix: String
-    address: String
-    address2: String
-    city: String
+    ssn: String
+    addressUnit: String
+    lastName: String
+    addressStreet: String
+    zipCode: String
+    addressPreDirection: String
+    addressPostDirection: String
     state: String
-    zip: String
+    firstName: String
+    city: String
+    addressType: String
+    addressNumber: String
+    middleInit: String
   }
 
   type AccountsResponse {
     ok: Boolean!
-    validAccounts: [Account]
-    invalidAccounts: [Account]
+    accounts: Account
     errors: [Error!]
   }
 

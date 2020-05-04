@@ -1,14 +1,22 @@
 const mongoose = require('mongoose');
+const {
+  accountsSchema,
+  creditSummarySchema,
+  indicativeSchema,
+  addOnProductSchema,
+} = require('./subDocuments');
 
 const AccountSchema = new mongoose.Schema({
-  customerId: { type: mongoose.Schema.Types.ObjectId, required: true },
-  creditorName: { type: String, required: true },
-  balance: { type: Number, required: true },
-  limit: { type: Number, required: true },
-  accountRating: { type: String, required: true },
-  accountNumber: { type: String, required: true },
-  paymentDate: { type: Date, required: false },
-  status: { type: String, required: true },
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    unique: true,
+  },
+  tradeAccounts: [accountsSchema],
+  collectionAccounts: [accountsSchema],
+  creditSummary: { type: creditSummarySchema, required: false },
+  indicative: indicativeSchema,
+  addOnProduct: [addOnProductSchema],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -19,4 +27,5 @@ AccountSchema.pre('save', async function () {
   if (account.isModified('accountNumber')) {
   }
 });
+
 module.exports = mongoose.model('Account', AccountSchema);

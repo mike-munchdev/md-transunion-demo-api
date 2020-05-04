@@ -1,10 +1,19 @@
-const axios = require('axios').default;
+const request = require('request-promise');
+const omit = require('lodash/omit');
+const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
 const Customer = require('../models/Customer');
 const Account = require('../models/Account');
 
 const { accountRatings } = require('../utils/lookup');
 const connectDatabase = require('../models/connectDatabase');
+
+const validAccountFilter = (a) =>
+  (a.account.type === 'CC' || a.account.type === 'CH') &&
+  a.currentBalance >= Number(process.env.MINIMUM_ACCOUNT_BALANCE);
+const invalidAccountFilter = (a) =>
+  (a.account.type === 'CC' || a.account.type === 'CH') &&
+  a.currentBalance < Number(process.env.MINIMUM_ACCOUNT_BALANCE);
 
 const transformAccountJSON = (a) => {
   return {
@@ -24,36 +33,11 @@ const transformAccountJSON = (a) => {
   };
 };
 
-const createAccountsResponse = ({
+const createAccountsResponse = ({ ok, accounts = null, errors = [] }) => ({
   ok,
-  validAccounts = [],
-  invalidAccounts = [],
-  errors = [],
-}) => ({
-  ok,
-  validAccounts: validAccounts.map(transformAccountJSON),
-  invalidAccounts: invalidAccounts.map(transformAccountJSON),
+  accounts,
   errors,
 });
-
-const transformTransUnionJSON = ({ accounts, customer }) => {
-  return accounts
-    .filter((a) => a.account.type === 'CC' || a.account.type === 'CH')
-    .map((a) => ({
-      customerId: customer._id,
-      creditorName: a.subscriber.name.unparsed,
-      balance: a.currentBalance,
-      limit: a.creditLimit || 0,
-      availableCredit: a.creditLimit - a.currentBalance,
-      accountRating: a.accountRating,
-      accountNumber: a.accountNumber.toString(),
-      paymentDate: a.mostRecentPayment ? a.mostRecentPayment.date : null,
-      status:
-        a.currentBalance >= Number(process.env.MINIMUM_ACCOUNT_BALANCE)
-          ? 'GOOD'
-          : 'NOT GOOD',
-    }));
-};
 
 // TODO: change to work with transunion pull
 const getCustomerTransUnionData = async ({ data, filters }) => {
@@ -113,8 +97,7 @@ module.exports = {
 
         return createAccountsResponse({
           ok: true,
-          validAccounts: accounts.filter((a) => a.status === 'GOOD'),
-          invalidAccounts: accounts.filter((a) => a.status === 'NOT GOOD'),
+          accounts,
         });
       } catch (error) {
         return createAccountsResponse({
@@ -129,8 +112,7 @@ module.exports = {
 
         return createAccountsResponse({
           ok: true,
-          validAccounts: accounts.filter((a) => a.status === 'GOOD'),
-          invalidAccounts: accounts.filter((a) => a.status === 'NOT GOOD'),
+          accounts,
         });
       } catch (error) {
         return createAccountsResponse({
@@ -145,35 +127,33 @@ module.exports = {
 
         // connecting to test transunion data
         const customer = await Customer.findById(input.customerId);
+        if (!customer)
+          throw new Error(ERRORS.CUSTOMER.NOT_FOUND_WITH_PROVIDED_INFO);
 
-        const result = await axios.get(process.env.TU_API_PATH, {
+        const body = omit(input, ['customerId']);
+
+        const options = {
+          method: 'GET',
+          uri: process.env.TU_API_PATH,
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
           },
-        });
+          body,
+          json: true, // Automatically stringifies the body to JSON
+        };
 
-        const filteredResults = await getCustomerTransUnionData({
-          data: result.data,
-          filters: input,
-        });
+        const result = await request(options);
 
-        const transUnionData = transformTransUnionJSON({
-          accounts: [
-            ...filteredResults.tradeAccounts,
-            ...filteredResults.collectionAccounts,
-          ],
-          customer,
-        });
-
-        await Account.create(transUnionData);
-
-        const accounts = await Account.find({ customerId: input.customerId });
+        const accounts = await Account.findOneAndUpdate(
+          { customerId: customer.id },
+          { customerId: customer.id, ...result },
+          { new: true, upsert: true }
+        );
 
         return createAccountsResponse({
           ok: true,
-          validAccounts: accounts.filter((a) => a.status === 'GOOD'),
-          invalidAccounts: accounts.filter((a) => a.status === 'NOT GOOD'),
+          accounts,
         });
       } catch (error) {
         console.log('error', error);
