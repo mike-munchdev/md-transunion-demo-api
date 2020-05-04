@@ -142,14 +142,14 @@ const typeDefs = gql`
     person: TuPerson
   }
   type TuSocialSecurity {
-    number: Int
+    number: String
   }
 
   type TuUnit {
-    number: Int
+    number: String
   }
   type TuStreet {
-    number: Int
+    number: String
     name: String
     preDirectional: String
     type: String

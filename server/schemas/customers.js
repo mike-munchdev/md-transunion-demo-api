@@ -7,16 +7,20 @@ const typeDefs = gql`
     code: String
     email: String
     firstName: String!
-    middleName: String
+    middleInit: String
     lastName: String!
     suffix: String
     phoneNumber: String!
     ssn: String
-    address: String
-    address2: String
+    addressNumber: String
+    addressType: String
+    addressPostDirection: String
+    addressPreDirection: String
+    addressUnit: String
+    addressStreet: String
     city: String
     state: String
-    zip: String
+    zipCode: String
     accountCount: Int
   }
 
@@ -29,32 +33,40 @@ const typeDefs = gql`
   input CreateCustomerInput {
     email: String
     firstName: String!
-    middleName: String
+    middleInit: String
     lastName: String!
     suffix: String
     phoneNumber: String!
     ssn: String
-    address: String
-    address2: String
+    addressNumber: String
+    addressType: String
+    addressPostDirection: String
+    addressPreDirection: String
+    addressUnit: String
+    addressStreet: String
     city: String
     state: String
-    zip: String
+    zipCode: String
   }
 
   input UpdateCustomerInput {
     customerId: String!
     email: String
     firstName: String
-    middleName: String
+    middleInit: String
     lastName: String
     suffix: String
     phoneNumber: String
     ssn: String
-    address: String
-    address2: String
+    addressNumber: String
+    addressType: String
+    addressPostDirection: String
+    addressPreDirection: String
+    addressUnit: String
+    addressStreet: String
     city: String
     state: String
-    zip: String
+    zipCode: String
   }
 
   type Query {

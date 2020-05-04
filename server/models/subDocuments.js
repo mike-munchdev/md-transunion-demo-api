@@ -4,12 +4,12 @@ module.exports.addressSchema = new mongoose.Schema({
   status: { type: String },
   qualifier: { type: String },
   street: {
-    number: { type: Number },
+    number: { type: String },
     name: { type: String },
     preDirectional: { type: String },
     type: { type: String },
     unit: {
-      number: { type: Number },
+      number: { type: String },
     },
   },
   location: {
@@ -74,41 +74,39 @@ module.exports.accountsSchema = new mongoose.Schema({
   updateMethod: { type: String },
 });
 module.exports.creditSummarySchema = new mongoose.Schema({
-  creditSummary: {
-    revolvingAmount: {
-      percentAvailableCredit: { type: Number },
-      highCredit: { type: Number },
-      creditLimit: { type: Number },
-      currentBalance: { type: Number },
-      pastDue: { type: Number },
-      monthlyPayment: { type: Number },
-    },
-    closedWithBalanceAmount: {
-      currentBalance: { type: Number },
-      pastDue: { type: Number },
-      monthlyPayment: { type: Number },
-    },
-    totalAmount: {
-      highCredit: { type: Number },
-      creditLimit: { type: Number },
-      currentBalance: { type: Number },
-      pastDue: { type: Number },
-      monthlyPayment: { type: Number },
-    },
-    recordCounts: {
-      publicRecordCount: { type: Number },
-      collectionCount: { type: Number },
-      totalTradeCount: { type: Number },
-      negativeTradeCount: { type: Number },
-      historicalNegativeTradeCount: { type: Number },
-      historicalNegativeOccurrencesCount: { type: Number },
-      revolvingTradeCount: { type: Number },
-      installmentTradeCount: { type: Number },
-      mortgageTradeCount: { type: Number },
-      openTradeCount: { type: Number },
-      unspecifiedTradeCount: { type: Number },
-      totalInquiryCount: { type: Number },
-    },
+  revolvingAmount: {
+    percentAvailableCredit: { type: Number },
+    highCredit: { type: Number },
+    creditLimit: { type: Number },
+    currentBalance: { type: Number },
+    pastDue: { type: Number },
+    monthlyPayment: { type: Number },
+  },
+  closedWithBalanceAmount: {
+    currentBalance: { type: Number },
+    pastDue: { type: Number },
+    monthlyPayment: { type: Number },
+  },
+  totalAmount: {
+    highCredit: { type: Number },
+    creditLimit: { type: Number },
+    currentBalance: { type: Number },
+    pastDue: { type: Number },
+    monthlyPayment: { type: Number },
+  },
+  recordCounts: {
+    publicRecordCount: { type: Number },
+    collectionCount: { type: Number },
+    totalTradeCount: { type: Number },
+    negativeTradeCount: { type: Number },
+    historicalNegativeTradeCount: { type: Number },
+    historicalNegativeOccurrencesCount: { type: Number },
+    revolvingTradeCount: { type: Number },
+    installmentTradeCount: { type: Number },
+    mortgageTradeCount: { type: Number },
+    openTradeCount: { type: Number },
+    unspecifiedTradeCount: { type: Number },
+    totalInquiryCount: { type: Number },
   },
 });
 module.exports.indicativeSchema = new mongoose.Schema({
@@ -130,7 +128,7 @@ module.exports.indicativeSchema = new mongoose.Schema({
   ],
   address: [this.addressSchema],
   socialSecurity: {
-    number: { type: Number },
+    number: { type: String },
   },
   dateOfBirth: { type: String },
   employment: {

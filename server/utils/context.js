@@ -22,6 +22,7 @@ module.exports = async (args) => {
             arr[1].includes('createCustomerCodeForCustomer(') ||
             arr[1].includes('getAccountInformationFromTransUnion(') ||
             arr[1].includes('getCustomerCodeByCustomerId(') ||
+            arr[1].includes('getCustomerById(') ||
             arr[0].includes('query IntrospectionQuery {')
           ) {
             return { req: args.req, res: args.res };

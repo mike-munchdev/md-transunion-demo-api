@@ -1,4 +1,4 @@
-const request = require('request-promise');
+const axios = require('axios').default;
 const omit = require('lodash/omit');
 const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
@@ -15,6 +15,21 @@ const invalidAccountFilter = (a) =>
   (a.account.type === 'CC' || a.account.type === 'CH') &&
   a.currentBalance < Number(process.env.MINIMUM_ACCOUNT_BALANCE);
 
+const softVerifyCustomer = ({ input, customer }) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const customerVerified =
+        input.firstName.toUpperCase() === customer.firstName.toUpperCase() &&
+        input.lastName.toUpperCase() === customer.lastName.toUpperCase();
+      if (!customerVerified)
+        throw new Error(ERRORS.CUSTOMER.NOT_FOUND_WITH_PROVIDED_INFO);
+
+      resolve(customerVerified);
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 const transformAccountJSON = (a) => {
   return {
     id: a.id,
@@ -130,24 +145,14 @@ module.exports = {
         if (!customer)
           throw new Error(ERRORS.CUSTOMER.NOT_FOUND_WITH_PROVIDED_INFO);
 
+        await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
 
-        const options = {
-          method: 'GET',
-          uri: process.env.TU_API_PATH,
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body,
-          json: true, // Automatically stringifies the body to JSON
-        };
-
-        const result = await request(options);
+        const result = await axios.post(process.env.TU_API_PATH, body);
 
         const accounts = await Account.findOneAndUpdate(
           { customerId: customer.id },
-          { customerId: customer.id, ...result },
+          { customerId: customer.id, ...result.data },
           { new: true, upsert: true }
         );
 
