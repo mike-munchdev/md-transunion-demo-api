@@ -60,9 +60,5 @@ const resolvers = require('./server/resolvers/index');
     console.log(
       `🚀 GraphQL Subscriptions ready at ws://${ipaddr}:${PORT}${server.subscriptionsPath}`
     );
-    // seed database
-    (async () => {
-      // await seedDatabase();
-    })();
   });
 })();

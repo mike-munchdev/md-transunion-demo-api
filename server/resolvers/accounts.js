@@ -8,13 +8,6 @@ const Account = require('../models/Account');
 const { accountRatings } = require('../utils/lookup');
 const connectDatabase = require('../models/connectDatabase');
 
-const validAccountFilter = (a) =>
-  (a.account.type === 'CC' || a.account.type === 'CH') &&
-  a.currentBalance >= Number(process.env.MINIMUM_ACCOUNT_BALANCE);
-const invalidAccountFilter = (a) =>
-  (a.account.type === 'CC' || a.account.type === 'CH') &&
-  a.currentBalance < Number(process.env.MINIMUM_ACCOUNT_BALANCE);
-
 const softVerifyCustomer = ({ input, customer }) => {
   return new Promise((resolve, reject) => {
     try {
@@ -96,7 +89,7 @@ const getAccounts = ({ code = null, customerId = null }) => {
 
       let accounts;
       accounts = await Account.findOne({ customerId: customer._id });
-      console.log('getAccounts:accounts ', accounts);
+
       resolve(accounts);
     } catch (error) {
       reject(error);

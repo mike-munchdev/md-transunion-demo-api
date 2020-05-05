@@ -14,23 +14,20 @@ module.exports = async (args) => {
 
       if (query) {
         const arr = query.split('\n');
+        const req = args.req;
+        const token = req.header('x-auth');
 
+        // admin pass-through
+        if (token === process.env.PASSTHROUGH_TOKEN)
+          return { req, res: args.res };
+        console.log('arr', arr);
         if (arr.length)
           if (
             arr[1].includes('getTokenByCodeAndPhoneNumber(') ||
-            arr[1].includes('createCustomer(') ||
-            arr[1].includes('createCustomerCodeForCustomer(') ||
-            arr[1].includes('getAccountInformationFromTransUnion(') ||
-            arr[1].includes('getCustomerCodeByCustomerId(') ||
-            arr[1].includes('getCustomerById(') ||
             arr[0].includes('query IntrospectionQuery {')
           ) {
-            return { req: args.req, res: args.res };
+            return { req, res: args.res };
           } else {
-            const req = args.req;
-
-            const token = req.header('x-auth');
-
             if (!token) throw new ForbiddenError('missing token');
 
             const decoded = await validateToken(token, process.env.JWT_SECRET);
