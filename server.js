@@ -8,12 +8,16 @@ const cookieParser = require('cookie-parser');
 const { ApolloServer } = require('apollo-server-express');
 const context = require('./server/utils/context');
 const helment = require('helmet');
+const logger = require('./server/utils/logger');
+const creditsoft = require('./server/routes/creditsoft');
 
 // Provide schemas for apollo server
 const typeDefs = require('./server/schemas/index');
 
 // Provide resolver functions for your schema fields
 const resolvers = require('./server/resolvers/index');
+
+const log = logger('meredian-api');
 
 (async () => {
   // initialize server
@@ -35,6 +39,8 @@ const resolvers = require('./server/resolvers/index');
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(express.static(path.join(__dirname, 'public')));
+
+  app.use('/creditsoft', creditsoft(log));
 
   const server = new ApolloServer({
     typeDefs,
