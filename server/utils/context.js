@@ -19,8 +19,8 @@ module.exports = async (args) => {
 
         // admin pass-through
         if (token === process.env.PASSTHROUGH_TOKEN)
-          return { req, res: args.res };
-        console.log('arr', arr);
+          return { req, res: args.res, isAdmin: true };
+
         if (arr.length)
           if (
             arr[1].includes('getTokenByCodeAndPhoneNumber(') ||

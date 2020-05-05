@@ -23,21 +23,12 @@ const softVerifyCustomer = ({ input, customer }) => {
     }
   });
 };
-const transformAccountJSON = (a) => {
+const maskSensitiveAccountData = (a) => {
   return {
-    id: a.id,
-    creditorName: a.creditorName,
-    balance: a.balance,
-    limit: a.limit,
-    availableCredit: a.limit - a.balance,
-    accountRating: accountRatings.find(
-      (r) => r.code == a.accountRating.padStart(2, '0')
-    ).description,
+    ...a.toJSON(),
     accountNumber: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(
       12
     )}${a.accountNumber.slice(-4)}`,
-    paymentDate: a.paymentDate,
-    status: a.status,
   };
 };
 
@@ -46,28 +37,6 @@ const createAccountsResponse = ({ ok, accounts = null, errors = [] }) => ({
   accounts,
   errors,
 });
-
-// TODO: change to work with transunion pull
-const getCustomerTransUnionData = async ({ data, filters }) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const customerMatch =
-        data.indicative.name.person.first === filters.firstName.toUpperCase() &&
-        data.indicative.name.person.last === filters.lastName.toUpperCase() &&
-        data.indicative.socialSecurity.number.toString() === filters.ssn;
-
-      if (customerMatch)
-        resolve({
-          tradeAccounts: data.tradeAccounts,
-          collectionAccounts: data.collectionAccounts,
-        });
-
-      throw new Error('No TransUnion data found!');
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
 
 const getAccounts = ({ code = null, customerId = null }) => {
   return new Promise(async (resolve, reject) => {
@@ -129,7 +98,11 @@ module.exports = {
         });
       }
     },
-    getAccountInformationFromTransUnion: async (parent, { input }) => {
+    getAccountInformationFromTransUnion: async (
+      parent,
+      { input },
+      { isAdmin }
+    ) => {
       try {
         await connectDatabase();
 
@@ -146,7 +119,7 @@ module.exports = {
         await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
         let accounts;
-
+        console.log('accountCount', accountCount);
         if (accountCount === 0) {
           // call transunion if we don't have data for this user.
           const result = await axios.post(process.env.TU_API_PATH, body);
@@ -157,7 +130,21 @@ module.exports = {
           );
         } else {
           // do not call transunion if we already have data
+
           accounts = await Account.findOne({ customerId: customer.id });
+          if (!isAdmin) {
+            const tradeAccounts = accounts.tradeAccounts.map(
+              maskSensitiveAccountData
+            );
+
+            accounts.tradeAccounts = tradeAccounts;
+
+            const collectionAccounts = accounts.collectionAccounts.map(
+              maskSensitiveAccountData
+            );
+
+            accounts.collectionAccounts = collectionAccounts;
+          }
         }
 
         return createAccountsResponse({

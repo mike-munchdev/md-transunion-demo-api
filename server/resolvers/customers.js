@@ -14,14 +14,22 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
   errors,
 });
 
+const maskSensitiveCustomerData = (c) => {
+  return {
+    ...c.toJSON(),
+    ssn: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(
+      -4
+    )}`,
+  };
+};
 module.exports = {
   Query: {
-    getCustomerById: async (parent, { customerId }, context) => {
+    getCustomerById: async (parent, { customerId }, { isAdmin }) => {
       try {
         await connectDatabase();
 
         // TODO: check for accounts in db for this user/code
-        const customer = await Customer.findById(customerId);
+        let customer = await Customer.findById(customerId);
         const accountCount = await Account.countDocuments({
           customerId: customerId,
         });
@@ -30,6 +38,10 @@ module.exports = {
           throw new Error('No customer found with the provided information.');
 
         customer.accountCount = accountCount;
+        if (!isAdmin) {
+          customer = maskSensitiveCustomerData(customer);
+        }
+
         return createCustomerResponse({
           ok: true,
           customer,
@@ -43,13 +55,13 @@ module.exports = {
     },
   },
   Mutation: {
-    createCustomer: async (parent, { input }, context) => {
+    createCustomer: async (parent, { input }, { isAdmin }) => {
       try {
         const code = shortid.generate();
 
         await connectDatabase();
 
-        const customer = await Customer.create({
+        let customer = await Customer.create({
           ...input,
         });
 
@@ -58,9 +70,18 @@ module.exports = {
           code,
         });
 
+        if (!isAdmin) {
+          customer = maskSensitiveCustomerData(customer);
+        } else {
+          customer = customer.toObject();
+        }
+
         const response = createCustomerResponse({
           ok: true,
-          customer: { ...customer.toObject(), code: customerCode.code },
+          customer: {
+            ...customer,
+            code: customerCode.code,
+          },
         });
 
         return response;
@@ -71,20 +92,24 @@ module.exports = {
         });
       }
     },
-    updateCustomer: async (parent, { input }, context) => {
+    updateCustomer: async (parent, { input }, { isAdmin }) => {
       try {
         const { customerId } = input;
         if (!customerId) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
 
         await connectDatabase();
 
-        const customer = await Customer.findOneAndUpdate(
+        let customer = await Customer.findOneAndUpdate(
           { _id: customerId },
           input,
           {
             upsert: false,
           }
         );
+
+        if (!isAdmin) {
+          customer = maskSensitiveCustomerData(customer);
+        }
 
         return createCustomerResponse({
           ok: true,
