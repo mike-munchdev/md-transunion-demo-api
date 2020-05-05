@@ -46,4 +46,4 @@ const errorHandlerMiddleware = log => async (err, req, res, next) => {
   return res.status(error.statusCode).send({ message: error.message });
 };
 
-module.exports = { wrapErrors, filterError, errorObject, noticeError, errorHandlerMiddleware, }
+module.exports = { wrapErrors, filterError, errorObject, noticeError, errorHandlerMiddleware };
