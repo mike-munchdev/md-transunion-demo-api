@@ -40,11 +40,10 @@ module.exports = {
         if (!customer)
           throw new Error('No customer found with the provided information.');
 
-        customer.accountCount = accountCount;
-
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
         }
+        customer.accountCount = accountCount;
 
         return createCustomerResponse({
           ok: true,
