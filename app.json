@@ -1,0 +1,22 @@
+{
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "MINIMUM_ACCOUNT_BALANCE": 500,
+    "CREDIT_CARD_REPLACE_CHARACTER": "*",
+    "CORS_URL": "http://localhost:3000",
+    "MONGODB_URI": "mongodb://localhost:27017/Meredian",
+    "JWT_SECRET": "3c0d44f497ab7d5977291a02c1c54855",
+    "CODE_EXPIRY_IN_MINUTES": 60,
+    "TU_API_PATH": "http://70.167.155.142:8084/test",
+    "PASSTHROUGH_TOKEN": "meredian"
+  },
+  "formation": {},
+  "name": "meredian-api",
+  "scripts": {},
+  "stack": "heroku-18"
+}
