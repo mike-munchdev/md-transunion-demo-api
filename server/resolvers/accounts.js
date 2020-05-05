@@ -95,8 +95,8 @@ const getAccounts = ({ code = null, customerId = null }) => {
         );
 
       let accounts;
-      accounts = await Account.find({ customerId: customer._id });
-
+      accounts = await Account.findOne({ customerId: customer._id });
+      console.log('getAccounts:accounts ', accounts);
       resolve(accounts);
     } catch (error) {
       reject(error);
@@ -142,19 +142,30 @@ module.exports = {
 
         // connecting to test transunion data
         const customer = await Customer.findById(input.customerId);
+
         if (!customer)
           throw new Error(ERRORS.CUSTOMER.NOT_FOUND_WITH_PROVIDED_INFO);
 
+        const accountCount = await Account.countDocuments({
+          customerId: customer.id,
+        });
+
         await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
+        let accounts;
 
-        const result = await axios.post(process.env.TU_API_PATH, body);
-
-        const accounts = await Account.findOneAndUpdate(
-          { customerId: customer.id },
-          { customerId: customer.id, ...result.data },
-          { new: true, upsert: true }
-        );
+        if (accountCount === 0) {
+          // call transunion if we don't have data for this user.
+          const result = await axios.post(process.env.TU_API_PATH, body);
+          accounts = await Account.findOneAndUpdate(
+            { customerId: customer.id },
+            { customerId: customer.id, ...result.data },
+            { new: true, upsert: true }
+          );
+        } else {
+          // do not call transunion if we already have data
+          accounts = await Account.findOne({ customerId: customer.id });
+        }
 
         return createAccountsResponse({
           ok: true,

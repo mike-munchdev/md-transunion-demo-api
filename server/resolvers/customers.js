@@ -22,7 +22,9 @@ module.exports = {
 
         // TODO: check for accounts in db for this user/code
         const customer = await Customer.findById(customerId);
-        const accountCount = await Account.count({ customerId: customerId });
+        const accountCount = await Account.countDocuments({
+          customerId: customerId,
+        });
 
         if (!customer)
           throw new Error('No customer found with the provided information.');

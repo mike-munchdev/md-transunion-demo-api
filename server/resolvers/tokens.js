@@ -58,7 +58,7 @@ module.exports = {
         await connectDatabase();
 
         const customer = await getCustomer({ code, phoneNumber });
-
+        console.log('customer', customer);
         const token = await generateToken({
           user: {
             displayName: `${customer.firstName} ${customer.lastName}`,
