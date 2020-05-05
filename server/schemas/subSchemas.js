@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express');
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
   type TuAccount {
-    id: String!
+    id: ID!
     subscriber: TuSubscriber
     portfolioType: String
     accountNumber: String
@@ -24,7 +24,7 @@ const typeDefs = gql`
     updateMethod: String
   }
   type TuCreditSummary {
-    id: String!
+    id: ID!
     revolvingAmount: TuRevolvingAmount
     closedWithBalanceAmount: TuClosedWithBalanceAmount
     totalAmount: TuTotalAmount
@@ -32,7 +32,7 @@ const typeDefs = gql`
   }
 
   type TuIndicative {
-    id: String!
+    id: ID!
     name: [TuName]
     address: [TuAddress]
     socialSecurity: TuSocialSecurity
@@ -40,14 +40,14 @@ const typeDefs = gql`
     employment: TuEmployment
   }
   type TuAddOnProduct {
-    id: String!
+    id: ID!
     code: String
     status: String
     scoreModel: TuScoreModel
   }
 
   type TuRecordCounts {
-    id: String!
+    id: ID!
     publicRecordCount: Int
     collectionCount: Int
     totalTradeCount: Int
@@ -63,7 +63,7 @@ const typeDefs = gql`
   }
 
   type TuTotalAmount {
-    id: String!
+    id: ID!
     highCredit: Int
     creditLimit: Int
     currentBalance: Int
@@ -71,13 +71,13 @@ const typeDefs = gql`
     monthlyPayment: Int
   }
   type TuClosedWithBalanceAmount {
-    id: String!
+    id: ID!
     currentBalance: Int
     pastDue: Int
     monthlyPayment: Int
   }
   type TuRevolvingAmount {
-    id: String!
+    id: ID!
     percentAvailableCredit: Int
     highCredit: Int
     creditLimit: Int
@@ -86,53 +86,53 @@ const typeDefs = gql`
     monthlyPayment: Int
   }
   type TuSubscriberName {
-    id: String!
+    id: ID!
     unparsed: String
   }
 
   type TuSubscriber {
-    id: String!
+    id: ID!
     industryCode: String
     memberCode: String
     name: TuSubscriberName
   }
   type TuAccountType {
-    id: String!
+    id: ID!
     type: String
   }
 
   type TuCreditGrantor {
-    id: String!
+    id: ID!
     unparsed: String
   }
 
   type TuOriginal {
-    id: String!
+    id: ID!
     creditGrantor: TuCreditGrantor
     creditorClassification: String
     balance: Int
   }
 
   type TuRemark {
-    id: String!
+    id: ID!
     code: String
     type: String
   }
 
   type TuTerms {
-    id: String!
+    id: ID!
     paymentScheduleMonthCount: String
     scheduledMonthlyPayment: Int
   }
 
   type TuPaymentPatterns {
-    id: String!
+    id: ID!
     startDate: String
     text: String
   }
 
   type TuPaymentHistoricalCounters {
-    id: String!
+    id: ID!
     monthsReviewedCount: Int
     late30DaysTotal: Int
     late60DaysTotal: Int
@@ -140,39 +140,39 @@ const typeDefs = gql`
   }
 
   type TuPaymentHistory {
-    id: String!
+    id: ID!
     paymentPattern: TuPaymentPatterns
     historicalCounters: TuPaymentHistoricalCounters
   }
 
   type TuMostRecentPayment {
-    id: String!
+    id: ID!
     date: String
   }
 
   type TuPerson {
-    id: String!
+    id: ID!
     first: String
     middle: String
     last: String
     generationalSuffix: String
   }
   type TuName {
-    id: String!
+    id: ID!
     qualifier: String
     person: TuPerson
   }
   type TuSocialSecurity {
-    id: String!
+    id: ID!
     number: String
   }
 
   type TuUnit {
-    id: String!
+    id: ID!
     number: String
   }
   type TuStreet {
-    id: String!
+    id: ID!
     number: String
     name: String
     preDirectional: String
@@ -180,23 +180,23 @@ const typeDefs = gql`
     unit: TuUnit
   }
   type TuLocation {
-    id: String!
+    id: ID!
     city: String
     state: String
     zipCode: Int
   }
 
   type TuEmployer {
-    id: String!
+    id: ID!
     unparsed: String
   }
   type TuEmployment {
-    id: String!
+    id: ID!
     employer: TuEmployer
     dateOnFileSince: String
   }
   type TuAddress {
-    id: String!
+    id: ID!
     status: String
     qualifier: String
     street: TuStreet
@@ -205,23 +205,23 @@ const typeDefs = gql`
   }
 
   type TuFactor {
-    id: String!
+    id: ID!
     rank: Int
     code: Int
   }
   type TuFactors {
-    id: String!
+    id: ID!
     factor: [TuFactor]
   }
   type TuScore {
-    id: String!
+    id: ID!
     results: Int
     derogatoryAlert: Boolean
     fileInquiriesImpactedScore: Boolean
     factors: TuFactors
   }
   type TuScoreModel {
-    id: String!
+    id: ID!
     score: TuScore
   }
 `;

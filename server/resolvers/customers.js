@@ -16,12 +16,14 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
 
 const maskSensitiveCustomerData = (c) => {
   return {
-    ...c.toJSON(),
+    ...c.toObject(),
+    id: c.id,
     ssn: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(
       -4
     )}`,
   };
 };
+
 module.exports = {
   Query: {
     getCustomerById: async (parent, { customerId }, { isAdmin }) => {
@@ -30,6 +32,7 @@ module.exports = {
 
         // TODO: check for accounts in db for this user/code
         let customer = await Customer.findById(customerId);
+
         const accountCount = await Account.countDocuments({
           customerId: customerId,
         });
@@ -38,6 +41,7 @@ module.exports = {
           throw new Error('No customer found with the provided information.');
 
         customer.accountCount = accountCount;
+
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
         }
@@ -47,6 +51,7 @@ module.exports = {
           customer,
         });
       } catch (error) {
+        console.log('error', error);
         return createCustomerResponse({
           ok: false,
           errors: convertError(error),
@@ -72,8 +77,6 @@ module.exports = {
 
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
-        } else {
-          customer = customer.toObject();
         }
 
         const response = createCustomerResponse({

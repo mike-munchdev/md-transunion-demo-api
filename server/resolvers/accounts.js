@@ -25,7 +25,8 @@ const softVerifyCustomer = ({ input, customer }) => {
 };
 const maskSensitiveAccountData = (a) => {
   return {
-    ...a.toJSON(),
+    ...a.toObject(),
+    id: a.id,
     accountNumber: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(
       12
     )}${a.accountNumber.slice(-4)}`,
@@ -118,8 +119,14 @@ module.exports = {
 
         await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
+
+        // do not allow user to search other ssn
+        if (customer.ssn) {
+          body.ssn = customer.ssn;
+        }
+
         let accounts;
-        console.log('accountCount', accountCount);
+
         if (accountCount === 0) {
           // call transunion if we don't have data for this user.
           const result = await axios.post(process.env.TU_API_PATH, body);
@@ -132,6 +139,7 @@ module.exports = {
           // do not call transunion if we already have data
 
           accounts = await Account.findOne({ customerId: customer.id });
+
           if (!isAdmin) {
             const tradeAccounts = accounts.tradeAccounts.map(
               maskSensitiveAccountData

@@ -4,7 +4,7 @@ const { gql } = require('apollo-server-express');
 const typeDefs = gql`
   scalar Date
   type Account {
-    id: String!
+    id: ID!
     customerId: String!
     tradeAccounts: [TuAccount]
     collectionAccounts: [TuAccount]
@@ -28,6 +28,7 @@ const typeDefs = gql`
     addressType: String
     addressNumber: String
     middleInit: String
+    suffix: String
   }
 
   type AccountsResponse {
