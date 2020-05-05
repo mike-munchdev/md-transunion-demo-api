@@ -26,5 +26,3 @@ class ServerError extends BaseError {
 }
 
 module.exports = ServerError;
-
-//export default ServerError;

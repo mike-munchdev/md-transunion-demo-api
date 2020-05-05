@@ -42,14 +42,7 @@ const getCreditSoftData = async (query, headers) => {
   const params = { LeadID, token };
   const { authorization } = headers;
 
-  console.log('path', path);
-  console.log('LeadID', LeadID);
-  console.log('token', token);
-  console.log('params', params);
-  console.log('authorization', authorization);
-
   const pathToUse = (path && path.indexOf('/') > -1) ? path : '';
-
   const url = `${process.env.CSOFT_API_BASE}${pathToUse}?${createParamString(params)}`;
   
   const options = {
@@ -58,7 +51,7 @@ const getCreditSoftData = async (query, headers) => {
       authorization,
     },
   };
-  console.log('options', options);
+
   const response = await fetch(url, options);
   const validResponse = isJsonResponse(response);
   const responseBody = validResponse ? await response.json() : await response.text();

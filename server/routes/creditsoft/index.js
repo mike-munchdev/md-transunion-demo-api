@@ -21,7 +21,6 @@ const trackRequests = log => (req, res, next) => {
 };
 
 const getCreditSoftHandler = async(req, res) => {
-  //console.log('req.body', req.body.import.members);
   const { query, headers } = req;
 
   const getCSData = await getCreditSoftData(query, headers);

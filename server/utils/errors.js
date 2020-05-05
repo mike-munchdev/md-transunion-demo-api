@@ -1,4 +1,3 @@
-// import newrelic from 'newrelic';
 const { ServerError } = require('../errors');
 const logger = require('./logger');
 
@@ -43,7 +42,7 @@ const errorHandlerMiddleware = log => async (err, req, res, next) => {
     console.log(error);
     console.log(fatalErr);
   }
-  // newrelic.noticeError(error);
+
   return res.status(error.statusCode).send({ message: error.message });
 };
 
