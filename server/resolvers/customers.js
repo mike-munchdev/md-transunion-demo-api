@@ -14,6 +14,14 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
   errors,
 });
 
+const maskSensitiveCustomerData = (c) => {
+  return {
+    ...c.toJSON(),
+    ssn: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(7)}${c.ssn.slice(
+      -4
+    )}`,
+  };
+};
 module.exports = {
   Query: {
     getCustomerById: async (parent, { customerId }, context) => {
@@ -32,7 +40,7 @@ module.exports = {
         customer.accountCount = accountCount;
         return createCustomerResponse({
           ok: true,
-          customer,
+          customer: maskSensitiveCustomerData(customer),
         });
       } catch (error) {
         return createCustomerResponse({
@@ -60,7 +68,10 @@ module.exports = {
 
         const response = createCustomerResponse({
           ok: true,
-          customer: { ...customer.toObject(), code: customerCode.code },
+          customer: {
+            ...maskSensitiveCustomerData(customer.toObject()),
+            code: customerCode.code,
+          },
         });
 
         return response;
@@ -88,7 +99,7 @@ module.exports = {
 
         return createCustomerResponse({
           ok: true,
-          customer,
+          customer: maskSensitiveCustomerData(customer),
         });
       } catch (error) {
         console.log('error', error);
