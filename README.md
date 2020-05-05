@@ -2,4 +2,4 @@
 Meredian NodeJS API
 
 TBD add more detail on endpoints
-Use markdown to format items cleanly
+Use markdown to format items cleanly.
