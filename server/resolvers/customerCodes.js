@@ -26,12 +26,18 @@ module.exports = {
 
         // TODO: check for accounts in db for this user/code
 
-        const customerCode = await CustomerCode.findOne({
+        let customerCode = await CustomerCode.findOne({
           customerId,
-          expiry: { $gte: moment().utc() },
+          expiry: { $gte: moment().utc().toDate() },
         });
 
-        if (!customerCode) throw new Error(ERRORS.CODE.NOT_VALID_OR_NOT_FOUND);
+        if (!customerCode) {
+          const code = shortid.generate();
+          customerCode = await CustomerCode.create({
+            customerId,
+            code,
+          });
+        }
 
         return createCustomerCodeResponse({
           ok: true,
