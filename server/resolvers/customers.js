@@ -39,7 +39,7 @@ module.exports = {
 
         if (!customer)
           throw new Error('No customer found with the provided information.');
-
+        cust;
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
         }
@@ -76,6 +76,8 @@ module.exports = {
 
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
+        } else {
+          customer.id = customer._id;
         }
 
         const response = createCustomerResponse({
