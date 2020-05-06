@@ -7,6 +7,6 @@ module.exports.ERRORS = {
   CODE: {
     EXPIRED: 'Code has expired.',
     NOT_FOUND: 'Code not found.',
-    NOT_VALID_OR_NOT_FOUND: 'Code invalid or not found.',
+    NOT_VALID_OR_NOT_FOUND: 'Code expired or not found.',
   },
 };

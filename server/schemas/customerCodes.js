@@ -4,6 +4,7 @@ const { gql } = require('apollo-server-express');
 const typeDefs = gql`
   type CustomerCode {
     id: ID!
+    customerId: String
     code: String
     expiry: Date
   }
