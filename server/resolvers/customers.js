@@ -76,6 +76,9 @@ module.exports = {
 
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
+        } else {
+          customer = customer.toObject();
+          customer.id = customer._id;
         }
 
         const response = createCustomerResponse({
@@ -111,6 +114,9 @@ module.exports = {
 
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
+        } else {
+          customer = customer.toObject();
+          customer.id = customer._id;
         }
 
         return createCustomerResponse({
