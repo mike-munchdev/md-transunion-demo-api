@@ -10,6 +10,7 @@ const context = require('./server/utils/context');
 const helment = require('helmet');
 const logger = require('./server/utils/logger');
 const creditsoft = require('./server/routes/creditsoft');
+const { validateToken, findCustomer } = require('./server/utils/tokens');
 
 // Provide schemas for apollo server
 const typeDefs = require('./server/schemas/index');
@@ -46,6 +47,24 @@ const log = logger('meredian-api');
     typeDefs,
     resolvers,
     context,
+    subscriptions: {
+      onConnect: async (connectionParams, webSocket) => {
+        try {
+          if (connectionParams['x-auth']) {
+            if (connectionParams['x-auth'] === process.env.PASSTHROUGH_TOKEN)
+              return { isAdmin: true };
+
+            const decoded = await validateToken(connectionParams['x-auth']);
+            const user = await findCustomer(decoded);
+
+            return { user, isAdmin: false };
+          }
+          throw new Error('Missing auth token!');
+        } catch (e) {
+          throw e;
+        }
+      },
+    },
   });
 
   server.applyMiddleware({

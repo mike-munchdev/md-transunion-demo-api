@@ -27,6 +27,7 @@ const CustomerSchema = new mongoose.Schema({
   city: { type: String, required: false },
   state: { type: String, required: false },
   zipCode: { type: String, required: false },
+  leadId: { type: Number, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

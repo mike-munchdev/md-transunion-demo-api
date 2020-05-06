@@ -49,6 +49,10 @@ module.exports = async (args) => {
       } else {
         throw new SchemaError('Schema invalid');
       }
+    } else {
+      const isAdmin = args.connection.context.isAdmin;
+      const user = args.connection.context.user;
+      return { user, isAdmin };
     }
   } catch (e) {
     console.log(e);

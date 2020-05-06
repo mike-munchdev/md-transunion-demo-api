@@ -21,6 +21,7 @@ const typeDefs = gql`
     city: String
     state: String
     zipCode: String
+    leadId: Int
     accountCount: Int
   }
 
@@ -47,6 +48,7 @@ const typeDefs = gql`
     city: String
     state: String
     zipCode: String
+    leadId: Int
   }
 
   input UpdateCustomerInput {
@@ -66,6 +68,7 @@ const typeDefs = gql`
     addressStreet: String
     city: String
     state: String
+    leadId: Int
     zipCode: String
   }
 
