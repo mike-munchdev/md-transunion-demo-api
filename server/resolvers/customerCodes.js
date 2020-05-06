@@ -24,13 +24,18 @@ module.exports = {
       try {
         await connectDatabase();
 
-        // TODO: check for accounts in db for this user/code
+        // check for customer
+        const customer = await Customer.findById(customerId);
 
+        if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
+
+        // check for existing valid code
         let customerCode = await CustomerCode.findOne({
           customerId,
           expiry: { $gte: moment().utc().toDate() },
         });
 
+        // invalid or no code and valid customer?  create new code
         if (!customerCode) {
           const code = shortid.generate();
           customerCode = await CustomerCode.create({
