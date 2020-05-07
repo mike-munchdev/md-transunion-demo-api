@@ -45,6 +45,8 @@ const getCreditSoftData = async (query, headers) => {
   const pathToUse = (path && path.indexOf('/') > -1) ? path : '';
   const url = `${process.env.CSOFT_API_BASE}${pathToUse}?${createParamString(params)}`;
   
+  console.log('url', url);
+
   const options = {
     method: 'get',
     headers: {
@@ -53,6 +55,8 @@ const getCreditSoftData = async (query, headers) => {
   };
 
   const response = await fetch(url, options);
+  console.log('response GET', response);
+
   const validResponse = isJsonResponse(response);
   const responseBody = validResponse ? await response.json() : await response.text();
   console.log('response body GET', responseBody);
