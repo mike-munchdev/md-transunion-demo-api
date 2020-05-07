@@ -38,8 +38,8 @@ const postCreditSoftData = async (query, body, headers) => {
 };
 
 const getCreditSoftData = async (query, headers) => {
-  const { path, LeadID, token } = query;
-  const params = { LeadID, token };
+  const { path, LeadID, Token } = query;
+  const params = { LeadID, Token };
   const { authorization } = headers;
 
   const pathToUse = (path && path.indexOf('/') > -1) ? path : '';
