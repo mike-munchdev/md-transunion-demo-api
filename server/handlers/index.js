@@ -55,6 +55,7 @@ const getCreditSoftData = async (query, headers) => {
   const response = await fetch(url, options);
   const validResponse = isJsonResponse(response);
   const responseBody = validResponse ? await response.json() : await response.text();
+  console.log('response body GET', responseBody);
   if (validResponse && response.status < 300) {
     return responseBody;
   }
