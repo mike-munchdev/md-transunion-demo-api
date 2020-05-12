@@ -12,6 +12,8 @@ const typeDefs = gql`
     suffix: String
     phoneNumber: String!
     ssn: String
+    address: String
+    address2: String
     addressNumber: String
     addressType: String
     addressPostDirection: String
@@ -39,6 +41,8 @@ const typeDefs = gql`
     suffix: String
     phoneNumber: String!
     ssn: String
+    address: String
+    address2: String
     addressNumber: String
     addressType: String
     addressPostDirection: String
@@ -60,6 +64,8 @@ const typeDefs = gql`
     suffix: String
     phoneNumber: String
     ssn: String
+    address: String
+    address2: String
     addressNumber: String
     addressType: String
     addressPostDirection: String
