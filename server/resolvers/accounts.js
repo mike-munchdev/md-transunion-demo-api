@@ -67,12 +67,29 @@ const getAccounts = ({ code = null, customerId = null }) => {
   });
 };
 
+const performAccountMasking = ({ accounts, isAdmin }) => {
+  if (!isAdmin) {
+    const tradeAccounts = accounts.tradeAccounts.map(maskSensitiveAccountData);
+
+    accounts.tradeAccounts = tradeAccounts;
+
+    const collectionAccounts = accounts.collectionAccounts.map(
+      maskSensitiveAccountData
+    );
+
+    accounts.collectionAccounts = collectionAccounts;
+  }
+
+  return accounts;
+};
+
 module.exports = {
   Query: {
-    getAccountsForCustomer: async (parent, { customerId }) => {
+    getAccountsForCustomer: async (parent, { customerId }, { isAdmin }) => {
       try {
-        const accounts = await getAccounts({ customerId });
+        let accounts = await getAccounts({ customerId });
 
+        accounts = performAccountMasking({ accounts, isAdmin });
         return createAccountsResponse({
           ok: true,
           accounts,
@@ -84,9 +101,11 @@ module.exports = {
         });
       }
     },
-    getAccountsFromCode: async (parent, { code }) => {
+    getAccountsFromCode: async (parent, { code }, { isAdmin }) => {
       try {
-        const accounts = await getAccounts({ code });
+        let accounts = await getAccounts({ code });
+
+        accounts = performAccountMasking({ accounts, isAdmin });
 
         return createAccountsResponse({
           ok: true,
@@ -139,20 +158,7 @@ module.exports = {
           // do not call transunion if we already have data
 
           accounts = await Account.findOne({ customerId: customer.id });
-
-          if (!isAdmin) {
-            const tradeAccounts = accounts.tradeAccounts.map(
-              maskSensitiveAccountData
-            );
-
-            accounts.tradeAccounts = tradeAccounts;
-
-            const collectionAccounts = accounts.collectionAccounts.map(
-              maskSensitiveAccountData
-            );
-
-            accounts.collectionAccounts = collectionAccounts;
-          }
+          accounts = performAccountMasking({ accounts, isAdmin });
         }
 
         return createAccountsResponse({

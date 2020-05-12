@@ -26,7 +26,7 @@ module.exports = async (args) => {
             arr[1].includes('getTokenByCodeAndPhoneNumber(') ||
             arr[0].includes('query IntrospectionQuery {')
           ) {
-            return { req, res: args.res };
+            return { req, res: args.res, isAdmin: false };
           } else {
             if (!token) throw new ForbiddenError('missing token');
 
@@ -44,7 +44,7 @@ module.exports = async (args) => {
               throw new ForbiddenError(errorMessage);
             }
 
-            return { user, req: args.req, res: args.res };
+            return { user, req: args.req, res: args.res, isAdmin: false };
           }
       } else {
         throw new SchemaError('Schema invalid');
