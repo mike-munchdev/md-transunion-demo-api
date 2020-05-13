@@ -16,19 +16,15 @@ const typeDefs = gql`
   input TransUnionInput {
     customerId: String!
     ssn: String
-    addressUnit: String
-    lastName: String
-    addressStreet: String
-    zipCode: String
-    addressPreDirection: String
-    addressPostDirection: String
-    state: String
     firstName: String
-    city: String
-    addressType: String
-    addressNumber: String
     middleInit: String
+    lastName: String
     suffix: String
+    address: String
+    address2: String
+    city: String
+    state: String
+    zipCode: String
   }
 
   type AccountsResponse {
