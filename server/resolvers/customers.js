@@ -33,6 +33,9 @@ module.exports = {
         // TODO: check for accounts in db for this user/code
         let customer = await Customer.findById(customerId);
 
+        // TODO: use https://docs.mongodb.com/manual/reference/operator/aggregation/size/#exp._S_size
+        // to get the count here.
+
         const accountCount = await Account.countDocuments({
           customerId: customerId,
         });
