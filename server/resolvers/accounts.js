@@ -30,6 +30,7 @@ module.exports = {
         let accounts = await getAccounts({ customerId });
 
         accounts = performAccountMasking({ accounts, isAdmin });
+
         return createAccountsResponse({
           ok: true,
           accounts,
@@ -87,8 +88,9 @@ module.exports = {
         let accounts;
 
         if (
-          account.tradeAccounts.length === 0 &&
-          account.collectionAccounts.length === 0
+          !account ||
+          (account.tradeAccounts.length === 0 &&
+            account.collectionAccounts.length === 0)
         ) {
           // Check to see if we have TransUnion specific address fields, if not go get them and add them to the body
           // const addressVerification
@@ -128,8 +130,8 @@ module.exports = {
         } else {
           // do not call transunion if we already have data
           accounts = await Account.findOne({ customerId: customer.id });
-          accounts = performAccountMasking({ accounts, isAdmin });
         }
+        accounts = performAccountMasking({ accounts, isAdmin });
 
         return createAccountsResponse({
           ok: true,

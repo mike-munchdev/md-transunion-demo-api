@@ -15,12 +15,14 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
 });
 
 const maskSensitiveCustomerData = (c) => {
+  const ssn = c.ssn
+    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(-4)}`
+    : null;
+
   return {
     ...c.toObject(),
     id: c.id,
-    ssn: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(
-      -4
-    )}`,
+    ssn,
   };
 };
 
@@ -37,7 +39,7 @@ module.exports = {
         // to get the count here.
 
         const accountCount = await Account.countDocuments({
-          customerId: customerId,
+          customerId: customer.id,
         });
 
         if (!customer)

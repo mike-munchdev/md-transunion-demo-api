@@ -47,7 +47,7 @@ const generateToken = ({ user, type }) => {
 
       resolve(token);
     } catch (e) {
-      console.log('e', e);
+      console.log('error', e);
       reject(e);
     }
   });

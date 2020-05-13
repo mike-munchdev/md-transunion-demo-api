@@ -55,6 +55,7 @@ module.exports.getTamuAddressInformation = ({ customer }) => {
         throw new Error(ERRORS.TAMU.UNKNOWN);
 
       // return first street address
+
       resolve(data.StreetAddresses[0]);
     } catch (error) {
       console.log(error);
@@ -129,7 +130,7 @@ module.exports.performAddressVerificationAndUpdateCustomer = ({
           }
         );
 
-        resolve(updatedCustomer.toObject());
+        resolve(updatedCustomer);
       } else {
         resolve(customer);
       }
