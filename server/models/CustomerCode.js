@@ -8,10 +8,9 @@ const CustomerCodeSchema = new mongoose.Schema({
   expiry: {
     type: Date,
     required: true,
-    default: moment().add(
-      Number(process.env.CODE_EXPIRY_IN_MINUTES),
-      'minutes'
-    ),
+    default: moment()
+      .utc()
+      .add(Number(process.env.CODE_EXPIRY_IN_MINUTES), 'minutes'),
   },
 });
 

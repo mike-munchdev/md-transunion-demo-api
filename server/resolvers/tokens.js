@@ -25,8 +25,10 @@ const getCustomer = ({
       if (code && phoneNumber) {
         const customerCode = await CustomerCode.findOne({ code });
         if (!customerCode) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
-        const expiry = moment(customerCode.expiry);
-        const now = moment();
+        const expiry = moment(customerCode.expiry).utc();
+
+        const now = moment().utc();
+
         if (expiry.isBefore(now)) throw new Error(ERRORS.CODE.EXPIRED);
 
         // TODO: check for accounts in db for this user/code
@@ -39,8 +41,9 @@ const getCustomer = ({
       } else if (customerId) {
         const customer = await Customer.findById(customerId);
         resolve(customer);
+      } else {
+        throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
       }
-      if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
     } catch (error) {
       console.log('error', error);
       reject(error);
