@@ -28,7 +28,7 @@ module.exports = {
     getAccountsForCustomer: async (parent, { customerId }, { isAdmin }) => {
       try {
         let accounts = await getAccounts({ customerId });
-
+        if (!accounts) throw new Error(ERRORS.ACCOUNT.NOT_FOUND);
         accounts = performAccountMasking({ accounts, isAdmin });
 
         return createAccountsResponse({
@@ -45,7 +45,7 @@ module.exports = {
     getAccountsFromCode: async (parent, { code }, { isAdmin }) => {
       try {
         let accounts = await getAccounts({ code });
-
+        if (!accounts) throw new Error(ERRORS.ACCOUNT.NOT_FOUND);
         accounts = performAccountMasking({ accounts, isAdmin });
 
         return createAccountsResponse({
@@ -131,6 +131,7 @@ module.exports = {
           // do not call transunion if we already have data
           accounts = await Account.findOne({ customerId: customer.id });
         }
+        if (!accounts) throw new Error(ERRORS.ACCOUNT.NOT_FOUND);
         accounts = performAccountMasking({ accounts, isAdmin });
 
         return createAccountsResponse({

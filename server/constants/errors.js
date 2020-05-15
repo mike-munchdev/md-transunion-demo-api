@@ -9,6 +9,9 @@ module.exports.ERRORS = {
     NOT_FOUND: 'Code not found.',
     NOT_VALID_OR_NOT_FOUND: 'Code expired or not found.',
   },
+  ACCOUNT: {
+    NOT_FOUND: 'Accounts not found',
+  },
   TAMU: {
     UNKNOWN: 'Unknown error occurred when retrieving address information.',
   },
