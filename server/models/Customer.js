@@ -1,5 +1,3 @@
-const { encrypt } = require('../utils/encryption');
-
 const mongoose = require('mongoose');
 const { default: validatorF } = require('validator');
 
@@ -10,10 +8,9 @@ const CustomerSchema = new mongoose.Schema({
       validator: (v) => validatorF.isEmail(v),
       message: 'Email validation failed',
     },
-    unique: true,
   },
-  phoneNumber: { type: String, required: true, unique: true },
-  ssn: { type: String, required: false, unique: true },
+  phoneNumber: { type: String, required: true },
+  ssn: { type: String, required: false },
   firstName: { type: String, required: true },
   middleInit: { type: String, required: false },
   lastName: { type: String, required: true },
@@ -25,6 +22,7 @@ const CustomerSchema = new mongoose.Schema({
   addressPostDirection: { type: String, required: false },
   addressPreDirection: { type: String, required: false },
   addressUnit: { type: String, required: false },
+  addressUnitType: { type: String, required: false },
   addressStreet: { type: String, required: false },
   city: { type: String, required: false },
   state: { type: String, required: false },

@@ -12,4 +12,7 @@ module.exports.ERRORS = {
   ACCOUNT: {
     NOT_FOUND: 'Accounts not found',
   },
+  TAMU: {
+    UNKNOWN: 'Unknown error occurred when retrieving address information.',
+  },
 };

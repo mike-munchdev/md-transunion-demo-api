@@ -15,12 +15,14 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
 });
 
 const maskSensitiveCustomerData = (c) => {
+  const ssn = c.ssn
+    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(-4)}`
+    : null;
+
   return {
     ...c.toObject(),
     id: c.id,
-    ssn: `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(
-      -4
-    )}`,
+    ssn,
   };
 };
 
@@ -33,8 +35,11 @@ module.exports = {
         // TODO: check for accounts in db for this user/code
         let customer = await Customer.findById(customerId);
 
+        // TODO: use https://docs.mongodb.com/manual/reference/operator/aggregation/size/#exp._S_size
+        // to get the count here.
+
         const accountCount = await Account.countDocuments({
-          customerId: customerId,
+          customerId: customer.id,
         });
 
         if (!customer)
