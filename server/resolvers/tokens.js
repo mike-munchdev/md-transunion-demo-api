@@ -62,6 +62,8 @@ module.exports = {
 
         const customer = await getCustomer({ code, phoneNumber });
 
+        if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
+
         const token = await generateToken({
           user: {
             displayName: `${customer.firstName} ${customer.lastName}`,
@@ -88,6 +90,8 @@ module.exports = {
         await connectDatabase();
 
         const customer = await getCustomer({ customerId });
+
+        if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
 
         const token = await generateToken({
           user: {
