@@ -1,5 +1,8 @@
-const { addressFieldsChanged, tamuAddressFieldsFound } = require('./customer');
+const moment = require('moment');
+const { ERRORS } = require('../constants/errors');
 
+const { addressFieldsChanged, tamuAddressFieldsFound } = require('./customer');
+const CustomerCode = require('../models/CustomerCode');
 const Account = require('../models/Account');
 
 const Customer = require('../models/Customer');
@@ -34,7 +37,15 @@ module.exports.getAccounts = ({ code = null, customerId = null }) => {
       // TODO: check for accounts in db for this user/code
       let customer;
       if (code) {
-        customer = await Customer.findOne({ code });
+        const customerCode = await CustomerCode.findOne({ code });
+        if (!customerCode) throw new Error(ERRORS.CODE.NOT_VALID_OR_NOT_FOUND);
+        const expiry = moment(customerCode.expiry).utc();
+
+        const now = moment().utc();
+
+        if (expiry.isBefore(now)) throw new Error(ERRORS.CODE.EXPIRED);
+
+        customer = await Customer.findById(customerCode.customerId);
       } else if (customerId) {
         customer = await Customer.findById(customerId);
       }
