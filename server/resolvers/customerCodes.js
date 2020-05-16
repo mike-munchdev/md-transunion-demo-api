@@ -1,5 +1,7 @@
+const { generateCode } = require('../utils/customerCodes');
+
 const moment = require('moment');
-const shortid = require('shortid');
+
 const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
 
@@ -37,7 +39,7 @@ module.exports = {
 
         // invalid or no code and valid customer?  create new code
         if (!customerCode) {
-          const code = shortid.generate();
+          const code = generateCode(Number(process.env.CODE_LENGTH || '6'));
           customerCode = await CustomerCode.create({
             customerId,
             code,
@@ -65,7 +67,7 @@ module.exports = {
 
         if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
 
-        const code = shortid.generate();
+        const code = generateCode(Number(process.env.CODE_LENGTH || '6'));
         const customerCode = await CustomerCode.create({
           customerId: customer.id,
           code,

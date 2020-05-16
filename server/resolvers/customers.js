@@ -1,4 +1,5 @@
-const shortid = require('shortid');
+const { generateCode } = require('../utils/customerCodes');
+
 const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
 
@@ -67,7 +68,7 @@ module.exports = {
   Mutation: {
     createCustomer: async (parent, { input }, { isAdmin }) => {
       try {
-        const code = shortid.generate();
+        const code = generateCode(Number(process.env.CODE_LENGTH || '6'));
 
         await connectDatabase();
 
