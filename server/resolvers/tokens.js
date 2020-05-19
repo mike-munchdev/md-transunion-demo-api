@@ -36,6 +36,8 @@ const getCustomer = ({
           phoneNumber,
           _id: customerCode.customerId,
         });
+        if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
+
         customer.code = customerCode.code;
         resolve(customer);
       } else if (customerId) {
