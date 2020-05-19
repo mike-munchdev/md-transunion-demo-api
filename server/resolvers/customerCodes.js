@@ -43,6 +43,9 @@ module.exports = {
           customerCode = await CustomerCode.create({
             customerId,
             code,
+            expiry: moment()
+              .utc()
+              .add(Number(process.env.CODE_EXPIRY_IN_MINUTES), 'minutes'),
           });
         }
 
@@ -71,6 +74,9 @@ module.exports = {
         const customerCode = await CustomerCode.create({
           customerId: customer.id,
           code,
+          expiry: moment()
+            .utc()
+            .add(Number(process.env.CODE_EXPIRY_IN_MINUTES), 'minutes'),
         });
 
         return createCustomerCodeResponse({
