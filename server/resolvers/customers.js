@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const { generateCode } = require('../utils/customerCodes');
 
 const { ERRORS } = require('../constants/errors');
@@ -79,6 +81,9 @@ module.exports = {
         const customerCode = await CustomerCode.create({
           customerId: customer.id,
           code,
+          expiry: moment()
+            .utc()
+            .add(Number(process.env.CODE_EXPIRY_IN_MINUTES), 'minutes'),
         });
 
         if (!isAdmin) {
