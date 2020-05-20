@@ -43,10 +43,14 @@ const log = logger('meredian-api');
 
   app.use('/creditsoft', creditsoft(log));
 
+  const usePlayground = process.env.GRAPHQL_PLAYGROUND_ENABLED === 'true';
+
   const server = new ApolloServer({
     typeDefs,
     resolvers,
     context,
+    introspection: false,
+    playground: usePlayground,
     subscriptions: {
       onConnect: async (connectionParams, webSocket) => {
         try {
