@@ -3,6 +3,7 @@ module.exports.ERRORS = {
     NOT_FOUND_WITH_PROVIDED_INFO:
       'No customer found with the provided information.',
     NOT_FOUND: 'No customer found.',
+    ID_REQUIRED: 'Customer Id Required',
   },
   CODE: {
     EXPIRED: 'Code has expired.',

@@ -1,5 +1,9 @@
 const moment = require('moment');
 
+const {
+  maskSensitiveCustomerData,
+  removeSensitiveFields,
+} = require('../utils/customer');
 const { generateCode } = require('../utils/customerCodes');
 
 const { ERRORS } = require('../constants/errors');
@@ -16,18 +20,6 @@ const createCustomerResponse = ({ ok, customer = null, errors = null }) => ({
   customer,
   errors,
 });
-
-const maskSensitiveCustomerData = (c) => {
-  const ssn = c.ssn
-    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(-4)}`
-    : null;
-
-  return {
-    ...c.toObject(),
-    id: c.id,
-    ssn,
-  };
-};
 
 module.exports = {
   Query: {
@@ -112,13 +104,13 @@ module.exports = {
     updateCustomer: async (parent, { input }, { isAdmin }) => {
       try {
         const { customerId } = input;
-        if (!customerId) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
-
+        if (!customerId) throw new Error(ERRORS.CUSTOMER.ID_REQUIRED);
+        let updateValues = removeSensitiveFields(input);
         await connectDatabase();
 
         let customer = await Customer.findOneAndUpdate(
           { _id: customerId },
-          input,
+          updateValues,
           {
             upsert: false,
           }

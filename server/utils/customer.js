@@ -90,9 +90,10 @@ module.exports.performAddressVerificationAndUpdateCustomer = ({
       // if address fields changed or if we don't have tamufields go get them.
       if (areAddressFieldChanged || !areTamuFieldsFound) {
         // update if address changed otherwise just get the
+        const updateCustomerFields = this.removeSensitiveFields(fields);
         updatedCustomer = await Customer.findOneAndUpdate(
           { _id: customer.id },
-          fields,
+          updateCustomerFields,
           {
             upsert: false,
             new: true,
@@ -139,4 +140,41 @@ module.exports.performAddressVerificationAndUpdateCustomer = ({
       reject(error);
     }
   });
+};
+
+module.exports.removeSensitiveFields = (input) => {
+  const updateValues = { ...input };
+  const sensitiveFields = ['ssn', 'accountNumber', 'routingNumber'];
+  sensitiveFields.map((field) => {
+    if (
+      updateValues[field] &&
+      updateValues[field].includes(process.env.CREDIT_CARD_REPLACE_CHARACTER)
+    )
+      delete updateValues[field];
+  });
+  return updateValues;
+};
+
+module.exports.maskSensitiveCustomerData = (c) => {
+  const ssn = c.ssn
+    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(-4)}`
+    : null;
+  const accountNumber = c.accountNumber
+    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(
+        5
+      )}${c.accountNumber.slice(-4)}`
+    : null;
+  const routingNumber = c.routingNumber
+    ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(
+        5
+      )}${c.routingNumber.slice(-4)}`
+    : null;
+
+  return {
+    ...c.toObject(),
+    id: c.id,
+    ssn,
+    routingNumber,
+    accountNumber,
+  };
 };
