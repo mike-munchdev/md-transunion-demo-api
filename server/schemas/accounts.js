@@ -10,7 +10,7 @@ const typeDefs = gql`
     collectionAccounts: [TuAccount]
     creditSummary: TuCreditSummary
     indicative: TuIndicative
-    addOnProduct: TuAddOnProduct
+    addOnProduct: [TuAddOnProduct]
     createdAt: Date
     updatedAt: Date
   }
