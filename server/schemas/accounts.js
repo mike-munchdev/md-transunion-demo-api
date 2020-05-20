@@ -11,6 +11,8 @@ const typeDefs = gql`
     creditSummary: TuCreditSummary
     indicative: TuIndicative
     addOnProduct: TuAddOnProduct
+    createdAt: Date
+    updatedAt: Date
   }
 
   input TransUnionInput {

@@ -25,6 +25,10 @@ const typeDefs = gql`
     zipCode: String
     leadId: Int
     accountCount: Int
+    accountNumber: String
+    routingNumber: String
+    createdAt: Date
+    updatedAt: Date
   }
 
   type CustomerResponse {
@@ -53,6 +57,8 @@ const typeDefs = gql`
     state: String
     zipCode: String
     leadId: Int
+    accountNumber: String
+    routingNumber: String
   }
 
   input UpdateCustomerInput {
@@ -76,6 +82,8 @@ const typeDefs = gql`
     state: String
     leadId: Int
     zipCode: String
+    accountNumber: String
+    routingNumber: String
   }
 
   type Query {
