@@ -5,7 +5,7 @@ const {
 } = require('../utils/accounts');
 const {
   softVerifyCustomer,
-  performAddressVerificationAndUpdateCustomer,
+  performAddressVerificationAndUpdateCustomerAddressFields,
 } = require('../utils/customer');
 
 const { pick } = require('lodash');
@@ -80,9 +80,32 @@ module.exports = {
         await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
 
-        // do not allow user to search other ssn
-        if (customer.ssn) {
-          body.ssn = customer.ssn;
+        // save if values on customer change
+
+        if (
+          customer.ssn &&
+          !body.ssn.includes(process.env.CREDIT_CARD_REPLACE_CHARACTER)
+        ) {
+          // save all fields including new ssn if it's not the masked version
+
+          customer = await Customer.findOneAndUpdate(
+            { _id: customer.id },
+            body,
+            {
+              upsert: false,
+              new: true,
+            }
+          );
+        } else {
+          // only save non ssn fields
+          customer = await Customer.findOneAndUpdate(
+            { _id: customer.id },
+            omit(body, ['ssn']),
+            {
+              upsert: false,
+              new: true,
+            }
+          );
         }
 
         let accounts;
@@ -94,10 +117,12 @@ module.exports = {
         ) {
           // Check to see if we have TransUnion specific address fields, if not go get them and add them to the body
           // const addressVerification
-          customer = await performAddressVerificationAndUpdateCustomer({
-            customer,
-            fields: body,
-          });
+          customer = await performAddressVerificationAndUpdateCustomerAddressFields(
+            {
+              customer,
+              fields: body,
+            }
+          );
 
           // pull pertinent data from customer object
           const tuRequestBody = pick(customer, [

@@ -65,7 +65,7 @@ module.exports.getTamuAddressInformation = ({ customer }) => {
 };
 
 // function isn't pure it will change customer data.
-module.exports.performAddressVerificationAndUpdateCustomer = ({
+module.exports.performAddressVerificationAndUpdateCustomerAddressFields = ({
   customer,
   fields,
 }) => {

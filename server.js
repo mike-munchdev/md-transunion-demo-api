@@ -52,6 +52,10 @@ const log = logger('meredian-api');
     context,
     introspection,
     playground,
+    formatError: (err) => {
+      console.log('graphql: error', err);
+      return err;
+    },
     subscriptions: {
       onConnect: async (connectionParams, webSocket) => {
         try {
