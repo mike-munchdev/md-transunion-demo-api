@@ -39,7 +39,7 @@ module.exports = {
         });
 
         if (!customer)
-          throw new Error('No customer found with the provided information.');
+          throw new Error(ERRORS.CUSTOMER.NOT_FOUND_WITH_PROVIDED_INFO);
 
         if (!isAdmin) {
           customer = maskSensitiveCustomerData(customer);
