@@ -12,13 +12,13 @@ module.exports.addressFieldsChanged = ({ customer, fields }) =>
   customer.zipCode !== fields.zipCode;
 
 module.exports.tamuAddressFieldsFound = (customer) =>
-  customer.addressStreet !== null ||
-  customer.addressPreDirection !== null ||
-  customer.addressPostDirection !== null ||
-  customer.addressType !== null ||
-  customer.addressNumber !== null ||
-  customer.addressUnit !== null ||
-  customer.addressUnitType !== null;
+  customer.addressStreet ||
+  customer.addressPreDirection ||
+  customer.addressPostDirection ||
+  customer.addressType ||
+  customer.addressNumber ||
+  customer.addressUnit ||
+  customer.addressUnitType;
 
 module.exports.softVerifyCustomer = ({ input, customer }) => {
   return new Promise((resolve, reject) => {
