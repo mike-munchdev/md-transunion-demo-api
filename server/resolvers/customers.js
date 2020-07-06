@@ -3,6 +3,7 @@ const moment = require('moment');
 const {
   maskSensitiveCustomerData,
   removeSensitiveFields,
+  performAddressVerificationAndUpdateCustomerAddressFields,
 } = require('../utils/customer');
 const { generateCode } = require('../utils/customerCodes');
 
@@ -107,8 +108,20 @@ module.exports = {
         if (!customerId) throw new Error(ERRORS.CUSTOMER.ID_REQUIRED);
         let updateValues = removeSensitiveFields(input);
         await connectDatabase();
+        let customer = await Customer.findById(customerId);
 
-        let customer = await Customer.findOneAndUpdate(
+        if (!customer) throw new Error(ERRORS.CUSTOMER.NOT_FOUND);
+
+        // perform address verification and  addresses information
+        customer = await performAddressVerificationAndUpdateCustomerAddressFields(
+          {
+            customer,
+            fields: input,
+          }
+        );
+
+        // update all other information
+        customer = await Customer.findOneAndUpdate(
           { _id: customerId },
           updateValues,
           {

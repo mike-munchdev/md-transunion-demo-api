@@ -16,10 +16,6 @@ const { ERRORS } = require('../constants/errors');
 const convertError = require('../utils/convertErrors');
 const Customer = require('../models/Customer');
 const Account = require('../models/Account');
-const {
-  addressFieldsChanged,
-  tamuAddressFieldsFound,
-} = require('../utils/customer');
 
 const connectDatabase = require('../models/connectDatabase');
 
