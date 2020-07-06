@@ -24,6 +24,8 @@ const CustomerSchema = new mongoose.Schema({
   addressUnit: { type: String, required: false },
   addressUnitType: { type: String, required: false },
   addressStreet: { type: String, required: false },
+  zip: { type: String, required: false },
+  zipPlus4: { type: String, required: false },
   city: { type: String, required: false },
   state: { type: String, required: false },
   zipCode: { type: String, required: false },

@@ -80,8 +80,14 @@ module.exports = {
         await softVerifyCustomer({ input, customer });
         const body = omit(input, ['customerId']);
 
+        // check for address changes and get TAMU fields if they have changed
+        customer = await performAddressVerificationAndUpdateCustomerAddressFields(
+          {
+            customer,
+            fields: body,
+          }
+        );
         // save if values on customer change
-
         if (
           customer.ssn &&
           !body.ssn.includes(process.env.CREDIT_CARD_REPLACE_CHARACTER)
@@ -117,12 +123,6 @@ module.exports = {
         ) {
           // Check to see if we have TransUnion specific address fields, if not go get them and add them to the body
           // const addressVerification
-          customer = await performAddressVerificationAndUpdateCustomerAddressFields(
-            {
-              customer,
-              fields: body,
-            }
-          );
 
           // pull pertinent data from customer object
           const tuRequestBody = pick(customer, [

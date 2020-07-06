@@ -3,6 +3,7 @@ const Customer = require('../models/Customer');
 const { pick } = require('lodash');
 const axios = require('axios').default;
 const { ERRORS } = require('../constants/errors');
+const addressFields = ['address', 'address2', 'city', 'state', 'zipCode'];
 
 module.exports.addressFieldsChanged = ({ customer, fields }) =>
   customer.address !== fields.address ||
@@ -18,7 +19,9 @@ module.exports.tamuAddressFieldsFound = (customer) =>
   customer.addressType ||
   customer.addressNumber ||
   customer.addressUnit ||
-  customer.addressUnitType;
+  customer.addressUnitType ||
+  customer.zip ||
+  customer.zipPlus4;
 
 module.exports.softVerifyCustomer = ({ input, customer }) => {
   return new Promise((resolve, reject) => {
@@ -90,7 +93,7 @@ module.exports.performAddressVerificationAndUpdateCustomerAddressFields = ({
       // if address fields changed or if we don't have tamufields go get them.
       if (areAddressFieldChanged || !areTamuFieldsFound) {
         // update if address changed otherwise just get the
-        const updateCustomerFields = this.removeSensitiveFields(fields);
+        const updateCustomerFields = this.getAddressFields(fields);
         updatedCustomer = await Customer.findOneAndUpdate(
           { _id: customer.id },
           updateCustomerFields,
@@ -112,6 +115,8 @@ module.exports.performAddressVerificationAndUpdateCustomerAddressFields = ({
           'Suffix',
           'SuiteNumber',
           'PostDirectional',
+          'ZIP',
+          'ZIPPlus4',
         ]);
 
         // store tamu fields in database
@@ -124,6 +129,8 @@ module.exports.performAddressVerificationAndUpdateCustomerAddressFields = ({
             addressType: addressBody.Suffix,
             addressNumber: addressBody.Number,
             addressUnit: addressBody.SuiteNumber,
+            zip: addressBody.ZIP,
+            zipPlus4: addressBody.ZIPPlus4,
           },
           {
             upsert: false,
@@ -155,6 +162,9 @@ module.exports.removeSensitiveFields = (input) => {
   return updateValues;
 };
 
+module.exports.getAddressFields = (input) => {
+  return pick(input, addressFields);
+};
 module.exports.maskSensitiveCustomerData = (c) => {
   const ssn = c.ssn
     ? `${process.env.CREDIT_CARD_REPLACE_CHARACTER.repeat(5)}${c.ssn.slice(-4)}`
