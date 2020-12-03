@@ -10,7 +10,11 @@ const context = require('./server/utils/context');
 const helment = require('helmet');
 const logger = require('./server/utils/logger');
 const creditsoft = require('./server/routes/creditsoft');
-const { validateToken, findCustomer } = require('./server/utils/tokens');
+const {
+  validateToken,
+  findCustomer,
+  findApplication,
+} = require('./server/utils/tokens');
 
 // Provide schemas for apollo server
 const typeDefs = require('./server/schemas/index');
@@ -67,6 +71,14 @@ const log = logger('meredian-api');
             const user = await findCustomer(decoded);
 
             return { user, isAdmin: false };
+          } else if (connectionParams['x-authdr']) {
+            if (connectionParams['x-authdr'] === process.env.PASSTHROUGH_TOKEN)
+              return { isAdmin: true };
+
+            const decoded = await validateToken(connectionParams['x-authdr']);
+            const application = await findApplication(decoded);
+
+            return { application, isAdmin: false };
           }
           throw new Error('Missing auth token!');
         } catch (e) {
@@ -85,7 +97,7 @@ const log = logger('meredian-api');
 
   server.installSubscriptionHandlers(httpServer);
   const ipaddr = process.env.IP || 'localhost';
-  const PORT = Number(process.env.PORT) || 4001;
+  const PORT = Number(process.env.PORT) || 4005;
 
   httpServer.listen({ port: PORT }, async () => {
     console.log(

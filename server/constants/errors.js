@@ -5,6 +5,12 @@ module.exports.ERRORS = {
     NOT_FOUND: 'No customer found.',
     ID_REQUIRED: 'Customer Id Required',
   },
+  APPLICATION: {
+    NOT_FOUND_WITH_PROVIDED_INFO:
+      'No application found with the provided information.',
+    NOT_FOUND: 'No application found.',
+    ID_REQUIRED: 'Application Id Required',
+  },
   CODE: {
     EXPIRED: 'Code has expired.',
     NOT_FOUND: 'Code not found.',

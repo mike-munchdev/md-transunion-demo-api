@@ -5,23 +5,23 @@ const axios = require('axios').default;
 const { ERRORS } = require('../constants/errors');
 const addressFields = ['address', 'address2', 'city', 'state', 'zipCode'];
 
-module.exports.addressFieldsChanged = ({ customer, fields }) =>
-  customer.address !== fields.address ||
-  customer.address2 !== fields.address2 ||
-  customer.city !== fields.city ||
-  customer.state !== fields.state ||
-  customer.zipCode !== fields.zipCode;
+module.exports.addressFieldsChanged = ({ input, fields }) =>
+  input.address !== fields.address ||
+  input.address2 !== fields.address2 ||
+  input.city !== fields.city ||
+  input.state !== fields.state ||
+  input.zipCode !== fields.zipCode;
 
-module.exports.tamuAddressFieldsFound = (customer) =>
-  customer.addressStreet ||
-  customer.addressPreDirection ||
-  customer.addressPostDirection ||
-  customer.addressType ||
-  customer.addressNumber ||
-  customer.addressUnit ||
-  customer.addressUnitType ||
-  customer.zip ||
-  customer.zipPlus4;
+module.exports.tamuAddressFieldsFound = (input) =>
+  input.addressStreet ||
+  input.addressPreDirection ||
+  input.addressPostDirection ||
+  input.addressType ||
+  input.addressNumber ||
+  input.addressUnit ||
+  input.addressUnitType ||
+  input.zip ||
+  input.zipPlus4;
 
 module.exports.softVerifyCustomer = ({ input, customer }) => {
   return new Promise((resolve, reject) => {
@@ -39,18 +39,18 @@ module.exports.softVerifyCustomer = ({ input, customer }) => {
   });
 };
 
-module.exports.getTamuAddressInformation = ({ customer }) => {
+module.exports.getTamuAddressInformation = ({ input }) => {
   return new Promise(async (resolve, reject) => {
     try {
       const url = `${process.env.GEO_ADDRESS_API_URL}?apiKey=${
         process.env.GEO_ADDRESS_API_KEY
       }&version=${
         process.env.GEO_ADDRESS_API_VERSION
-      }&responseFormat=json&nonParsedStreetAddress=${`${customer.address}${
-        customer.address2 ? ', ' + customer.address2 : ''
-      }`}&nonParsedCity=${customer.city}&nonParsedState=${
-        customer.state
-      }&nonParsedZIP=${customer.zipCode}`;
+      }&responseFormat=json&nonParsedStreetAddress=${`${input.address}${
+        input.address2 ? ', ' + input.address2 : ''
+      }`}&nonParsedCity=${input.city}&nonParsedState=${
+        input.state
+      }&nonParsedZIP=${input.zipCode}`;
 
       const { data } = await axios.get(url);
 

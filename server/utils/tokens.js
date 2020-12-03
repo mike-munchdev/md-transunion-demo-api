@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Customer = require('../models/Customer');
 const connectDatabase = require('../models/connectDatabase');
+const Application = require('../models/Application');
 
 const validateToken = (token, secret) => {
   return new Promise((resolve, reject) => {
@@ -22,7 +23,23 @@ const findCustomer = (decoded) => {
         const customer = await Customer.findById(decoded.info.id);
         resolve(customer);
       } else {
-        throw new Error('Malformed token');
+        throw new Error('Malformed customer token');
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const findApplication = (decoded) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (decoded.info.code) {
+        await connectDatabase();
+        const application = await Application.findById(decoded.info.id);
+        resolve(application);
+      } else {
+        throw new Error('Malformed application token');
       }
     } catch (e) {
       reject(e);
@@ -53,4 +70,9 @@ const generateToken = ({ user, type }) => {
   });
 };
 
-module.exports = { validateToken, findCustomer, generateToken };
+module.exports = {
+  validateToken,
+  findCustomer,
+  generateToken,
+  findApplication,
+};

@@ -7,10 +7,24 @@ const { generateToken } = require('../utils/tokens');
 const Customer = require('../models/Customer');
 
 const connectDatabase = require('../models/connectDatabase');
+const Application = require('../models/Application');
+const { createNewApplication } = require('../utils/application');
+const { omit } = require('lodash');
 
 const createTokenResponse = ({ ok, token = null, errors = null }) => ({
   ok,
   token,
+  errors,
+});
+const createApplicationAndTokenResponse = ({
+  ok,
+  token = null,
+  application = null,
+  errors = null,
+}) => ({
+  ok,
+  token,
+  application,
   errors,
 });
 
@@ -82,6 +96,54 @@ module.exports = {
       } catch (error) {
         console.log('error', error);
         return createTokenResponse({
+          ok: false,
+          errors: convertError(error),
+        });
+      }
+    },
+    getApplicationAndTokenByEmailAndPhoneNumber: async (
+      parent,
+      { input },
+      context
+    ) => {
+      try {
+        const { email, phoneNumber, createNew } = input;
+        await connectDatabase();
+
+        let application = await Application.findOne({
+          'applicant.email': email,
+        });
+
+        console.log('existing application', application);
+        console.log('createNew', createNew);
+
+        if (createNew && !application) {
+          application = await createNewApplication(omit(input, ['createNew']));
+        }
+
+        if (!application)
+          throw new Error(ERRORS.APPLICATION.NOT_FOUND_WITH_PROVIDED_INFO);
+
+        console.log('application', application);
+        let token;
+        if (application.applicant.phoneNumber === phoneNumber) {
+          token = await generateToken({
+            user: {
+              displayName: `${application.applicant.firstName} ${application.applicant.lastName}`,
+              id: application.id,
+            },
+            type: 'Application',
+          });
+        }
+
+        return createApplicationAndTokenResponse({
+          ok: true,
+          token,
+          application: application ? application.transform() : application,
+        });
+      } catch (error) {
+        console.log('error', error);
+        return createApplicationAndTokenResponse({
           ok: false,
           errors: convertError(error),
         });

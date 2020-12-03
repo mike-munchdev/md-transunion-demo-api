@@ -224,6 +224,64 @@ const typeDefs = gql`
     id: ID!
     score: TuScore
   }
+
+  type Creditor {
+    id: ID!
+    name: String!
+    accountNumber: String!
+    currentApr: Float
+    currentPayment: Float
+    currentBalance: Float
+  }
+  type Income {
+    id: ID!
+    monthlyNetPay: Float
+    coApplicantMonthlyNetPay: Float
+    ssnIncome: Float
+    retirementPay: Float
+    otherGovtBenefits: Float
+    childSupport: Float
+    allOtherIncome: Float
+  }
+  type Expense {
+    id: ID!
+    monthlyRent: Float
+    mortgage: Float
+    utilities: Float
+    groceries: Float
+    automobilePayments: Float
+    automobileExpenses: Float
+    medical: Float
+    insurance: Float
+    dayCare: Float
+    childSupport: Float
+    installmentLoans: Float
+    allOther: Float
+  }
+  type Applicant {
+    id: ID!
+    firstName: String
+    middleName: String
+    lastName: String
+    address: String
+    address2: String
+    city: String
+    state: String!
+    zip: String
+    email: String!
+    phoneNumber: String!
+    cellPhoneNumber: String
+    faxPhoneNumber: String
+    dobMonth: Int
+    dobDay: Int
+    dobYear: Int
+    ssn: String
+    employer: String
+    occupation: String
+    workPhoneNumber: String
+    maritalStatus: String
+    hardshipReason: String
+  }
 `;
 
 module.exports = typeDefs;
